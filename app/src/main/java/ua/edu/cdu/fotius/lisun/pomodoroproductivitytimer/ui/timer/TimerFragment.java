@@ -15,7 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base;
 
-public interface MvpView {
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
+
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+
+public class TimerFragment extends Fragment {
+
+
+    public TimerFragment() {
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_timer, container, false);
+    }
+
 }

@@ -16,8 +16,28 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group_1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_timer"
+            android:title="@string/drawer_item_timer" />
+        <item
+            android:id="@+id/nav_projects"
+            android:title="@string/drawer_item_projects" />
+        <item
+            android:id="@+id/nav_statistics"
+            android:title="@string/drawer_item_statistics" />
+    </group>
+
+    <group
+        android:id="@+id/group_2"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/drawer_item_settings" />
+    </group>
+
+</menu>

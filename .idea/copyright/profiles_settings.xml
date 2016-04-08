@@ -1,3 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="" />
+  <settings default="">
+    <module2copyright>
+      <element module="Project Files" copyright="GPL-3.0 Pomodoro" />
+    </module2copyright>
+  </settings>
 </component>
