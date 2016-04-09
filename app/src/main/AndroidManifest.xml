@@ -35,6 +35,10 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".ui.services.TimerService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

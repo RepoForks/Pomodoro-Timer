@@ -108,6 +108,10 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         return true;
     }
 
+    /*
+    * This method is intended for both "add"
+    * and "replace" fragment operations
+    */
     private void setFragment(BaseFragment fragment, String tag) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment, tag)
