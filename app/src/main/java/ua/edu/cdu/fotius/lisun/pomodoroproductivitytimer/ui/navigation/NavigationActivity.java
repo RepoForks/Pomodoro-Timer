@@ -19,6 +19,8 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.navigation;
 
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -68,11 +70,9 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     }
 
     private void setInitialFragment() {
-        BaseFragment fragment = new TimerFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, fragment, TimerFragment.FRAGMENT_TAG)
-                .commit();
-        mCurrentFragment = fragment;
+        int defaultId = R.id.nav_timer;
+        onNavigationItemSelected(mNavigationView.getMenu().findItem(defaultId));
+        mNavigationView.setCheckedItem(defaultId);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         int id = item.getItemId();
 
         if (id == R.id.nav_timer) {
-
+            setFragment(new TimerFragment(), TimerFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_projects) {
 
         } else if (id == R.id.nav_statistics) {
@@ -106,5 +106,12 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
 
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void setFragment(BaseFragment fragment, String tag) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment, tag)
+                .commit();
+        mCurrentFragment = fragment;
     }
 }
