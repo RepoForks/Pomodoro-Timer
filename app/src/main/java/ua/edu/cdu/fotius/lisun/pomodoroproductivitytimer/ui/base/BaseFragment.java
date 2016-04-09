@@ -15,10 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.main;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base;
 
-public class MainPresenter extends MvpPresenter<MainView> {
-    //TODO: add "main specific" here
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+
+public class BaseFragment extends Fragment{
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 }

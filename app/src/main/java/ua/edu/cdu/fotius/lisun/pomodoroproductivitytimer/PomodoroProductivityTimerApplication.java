@@ -15,10 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.main;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer;
 
-public interface MainView extends MvpView {
-    //TODO: add "main specific" here
+import android.app.Application;
+
+import timber.log.Timber;
+
+public class PomodoroProductivityTimerApplication extends Application{
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if(BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
+    }
 }

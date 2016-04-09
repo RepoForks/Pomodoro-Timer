@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.main;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.navigation;
 
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,34 +31,60 @@ import butterknife.Bind;
 
 import butterknife.ButterKnife;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.TimerFragment;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.drawer_layout) DrawerLayout mDrawer;
     @Bind(R.id.nav_view) NavigationView mNavigationView;
 
+    public final String CURRENT_FRAGMENT_TAG_KEY = "current_fragment_key";
+    public Fragment mCurrentFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
-
         setSupportActionBar(mToolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
-
         mNavigationView.setNavigationItemSelectedListener(this);
+        if(!restoreFragment(savedInstanceState)){
+           setInitialFragment();
+        }
+    }
+
+    private boolean restoreFragment(Bundle savedInstanceState) {
+        if(savedInstanceState == null) return false;
+        String savedFragmentTag = savedInstanceState.getString(CURRENT_FRAGMENT_TAG_KEY);
+        mCurrentFragment = getSupportFragmentManager()
+                .findFragmentByTag(savedFragmentTag);
+        return true;
+    }
+
+    private void setInitialFragment() {
+        BaseFragment fragment = new TimerFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment, TimerFragment.FRAGMENT_TAG)
+                .commit();
+        mCurrentFragment = fragment;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(CURRENT_FRAGMENT_TAG_KEY, mCurrentFragment.getTag());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }

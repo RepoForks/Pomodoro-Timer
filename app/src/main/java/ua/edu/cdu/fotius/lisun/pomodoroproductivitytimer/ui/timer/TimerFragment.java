@@ -20,25 +20,36 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
 
-public class TimerFragment extends Fragment {
+public class TimerFragment extends BaseFragment implements TimerView{
 
+    public static String FRAGMENT_TAG = "timer_fragment";
 
-    public TimerFragment() {
+    @Bind(R.id.fab)
+    FloatingActionButton mFloatingButton;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Timber.i("TimerFragment.onCreate");
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_timer, container, false);
+        View v = inflater.inflate(R.layout.fragment_timer, container, false);
+        ButterKnife.bind(this, v);
+        return v;
     }
 
 }
