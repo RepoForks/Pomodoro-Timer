@@ -22,4 +22,5 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 
 public interface TimerView extends MvpView{
     //TODO:
+    //updateTime() from service
 }

@@ -18,25 +18,35 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
 
-
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerServiceConnection;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
+
 
 public class TimerFragment extends BaseFragment implements TimerView{
 
     public static String FRAGMENT_TAG = "timer_fragment";
 
-    @Bind(R.id.fab)
-    FloatingActionButton mFloatingButton;
+    private Context mContext;
+    //TODO: for injector
+    private TimerServiceConnection mServiceConnection = new TimerServiceConnection();
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,4 +62,29 @@ public class TimerFragment extends BaseFragment implements TimerView{
         return v;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent intent = new Intent(mContext, TimerService.class);
+        mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(mServiceConnection.isConnected()) {
+            mContext.unbindService(mServiceConnection);
+        }
+    }
+
+    @OnClick(R.id.fab)
+    void startStopTimer() {
+        TimerService service = mServiceConnection.getService();
+        //TODO: also change fab image here
+        if(service.isTimerRunning()) {
+            service.stopTimer();
+        } else {
+            service.startTimer();
+        }
+    }
 }

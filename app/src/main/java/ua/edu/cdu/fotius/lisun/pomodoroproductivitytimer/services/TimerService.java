@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.services;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
 import android.app.Service;
 import android.content.Intent;
@@ -25,7 +25,7 @@ import android.support.annotation.Nullable;
 
 import timber.log.Timber;
 
-public class TimerService extends Service{
+public class TimerService extends Service {
 
     class Binder extends android.os.Binder {
         public TimerService getService() {
