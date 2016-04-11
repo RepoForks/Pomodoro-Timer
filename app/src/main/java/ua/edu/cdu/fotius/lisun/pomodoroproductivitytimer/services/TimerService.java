@@ -23,17 +23,20 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class TimerService extends Service {
 
-    class Binder extends android.os.Binder {
+    public class Binder extends android.os.Binder {
         public TimerService getService() {
             return TimerService.this;
         }
     }
 
-    private Binder mBinder = new Binder();
+
+    private android.os.Binder mBinder = new Binder();
 
     @Nullable
     @Override

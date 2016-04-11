@@ -25,10 +25,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.DaggerTimerFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerServiceConnection;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
@@ -39,8 +42,8 @@ public class TimerFragment extends BaseFragment implements TimerView{
     public static String FRAGMENT_TAG = "timer_fragment";
 
     private Context mContext;
-    //TODO: for injector
-    private TimerServiceConnection mServiceConnection = new TimerServiceConnection();
+    @Inject
+    TimerServiceConnection mServiceConnection;
 
     @Override
     public void onAttach(Context context) {
@@ -52,6 +55,8 @@ public class TimerFragment extends BaseFragment implements TimerView{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.i("TimerFragment.onCreate");
+        DaggerTimerFragmentComponent.builder()
+                .build().inject(this);
     }
 
     @Override

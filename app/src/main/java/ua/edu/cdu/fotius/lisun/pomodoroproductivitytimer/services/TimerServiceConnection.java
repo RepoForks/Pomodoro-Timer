@@ -20,12 +20,16 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
 import android.content.ComponentName;
 import android.os.IBinder;
+import javax.inject.Inject;
+import timber.log.Timber;
 
 public class TimerServiceConnection implements android.content.ServiceConnection{
 
     private TimerService mService;
 
+    @Inject
     public TimerServiceConnection(){
+        Timber.i("TimerServiceConnection constructor");
     }
 
     @Override
