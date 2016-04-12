@@ -20,19 +20,25 @@ android {
     }
 }
 
+ext {
+    supportVersion = '23.2.1'
+    butterKnifeVersion = '7.0.1'
+    timberVersion = '3.1.0'
+    daggerVersion = '2.1'
+    rxVersion = '1.1.0'
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-
-
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:design:23.2.1'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.jakewharton.timber:timber:3.1.0'
-    compile 'com.android.support:support-v4:23.2.1'
-    apt 'com.google.dagger:dagger-compiler:2.1'
-    compile 'com.google.dagger:dagger:2.1'
+    compile "com.android.support:support-v4:${supportVersion}"
+    compile "com.android.support:appcompat-v7:${supportVersion}"
+    compile "com.android.support:design:${supportVersion}"
+    compile "com.jakewharton:butterknife:${butterKnifeVersion}"
+    compile "com.jakewharton.timber:timber:${timberVersion}"
+    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    compile "com.google.dagger:dagger:${daggerVersion}"
     provided 'javax.annotation:jsr250-api:1.0'
-    compile 'io.reactivex:rxandroid:1.1.0'
-    compile 'io.reactivex:rxjava:1.1.0'
+    compile "io.reactivex:rxandroid:${rxVersion}"
+    compile "io.reactivex:rxjava:${rxVersion}"
 }
