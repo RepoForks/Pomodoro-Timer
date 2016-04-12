@@ -30,7 +30,7 @@ public class TimerValueBus {
         mSubject.onNext(object);
     }
 
-    public Observable<Object> getObservable() {
+    public Observable<Object> getObservable()  {
         return mSubject;
     }
 }
