@@ -18,13 +18,21 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
+import timber.log.Timber;
 
-public class TimerValueBus {
+public class TimerEventBus {
     private Subject<Object, Object> mSubject = new SerializedSubject<>(PublishSubject.create());
+
+    public TimerEventBus() {
+        Timber.i("TimerValueBus unique ID is: " + System.identityHashCode(this));
+    }
 
     public void send(Object object) {
         mSubject.onNext(object);

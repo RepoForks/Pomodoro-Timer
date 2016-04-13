@@ -26,7 +26,7 @@ import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
-import timber.log.Timber;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 
 public class TimerService extends Service {
 
@@ -41,8 +41,17 @@ public class TimerService extends Service {
     private final int SINGLE_ITERATION_TIME = 10;
 
     private android.os.Binder mBinder = new Binder();
-    //TODO: maybe to separate class and inject
+
+    @Inject
+    TimerEventBus mEventBus;
     private CountDownTimer mTimer;
+    private boolean mIsTimerRunning;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        PomodoroProductivityTimerApplication.get(this).getApplicationComponent().inject(this);
+    }
 
     @Nullable
     @Override
@@ -51,27 +60,40 @@ public class TimerService extends Service {
     }
 
     public void startTimer() {
-        Timber.i("startTimer");
+        //TODO: maybe to separate class
         mTimer = new CountDownTimer(TOTAL_TIME, SINGLE_ITERATION_TIME) {
             @Override
             public void onTick(long millisUntilFinished) {
-                //postTime to rx event bus
-                Timber.i("Millis until finished: %d", millisUntilFinished);
+                postTime(millisUntilFinished);
             }
 
             @Override
             public void onFinish() {
+                dropTimer();
             }
         }.start();
+        mIsTimerRunning = true;
+    }
+
+    private void postTime(long millis) {
+        mEventBus.send(new Time(millis));
+    }
+
+    private void dropTimer() {
+        postTime(0);
+        mTimer = null;
+        mIsTimerRunning = false;
     }
 
     public void stopTimer() {
-        Timber.i("stopTimer");
+        if((mTimer != null) && mIsTimerRunning) {
+            mTimer.cancel();
+            dropTimer();
+        }
     }
 
     public boolean isTimerRunning() {
-        Timber.i("isTimerRunning");
-        return false;
+        return mIsTimerRunning;
     }
 
     //TODO:

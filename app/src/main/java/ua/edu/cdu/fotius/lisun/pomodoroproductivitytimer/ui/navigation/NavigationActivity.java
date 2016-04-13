@@ -100,7 +100,6 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         } else if (id == R.id.nav_settings) {
 
         }
-
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.scopes;
 
-import javax.inject.Inject;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import dagger.Component;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.TimerFragment;
+import javax.inject.Scope;
 
-@Component
-public interface TimerFragmentComponent {
-    void inject(TimerFragment timerFragment);
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PerFragment {
 }

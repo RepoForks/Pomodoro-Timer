@@ -16,10 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
+import javax.inject.Singleton;
 
-public class TimerPresenter extends MvpPresenter<TimerView> {
-    //TODO: timer presenter specific methods
+import dagger.Module;
+import dagger.Provides;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
+
+@Module
+public class ApplicationModule {
+    @Provides
+    @Singleton
+    TimerEventBus provideTimerValueBus() {
+        return new TimerEventBus();
+    }
 }

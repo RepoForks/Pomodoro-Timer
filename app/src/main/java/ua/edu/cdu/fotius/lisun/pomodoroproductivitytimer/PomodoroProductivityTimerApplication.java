@@ -19,15 +19,35 @@
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer;
 
 import android.app.Application;
+import android.content.Context;
 
 import timber.log.Timber;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.ApplicationComponent;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerApplicationComponent;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.ApplicationModule;
 
 public class PomodoroProductivityTimerApplication extends Application{
+
+    public static PomodoroProductivityTimerApplication get(Context context) {
+        return (PomodoroProductivityTimerApplication) context.getApplicationContext();
+    }
+
+    private ApplicationComponent mApplicationComponent;
+
     @Override
     public void onCreate() {
         super.onCreate();
         if(BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
+    }
+
+    public ApplicationComponent getApplicationComponent() {
+        if(mApplicationComponent == null) {
+            mApplicationComponent = DaggerApplicationComponent.builder()
+                    .applicationModule(new ApplicationModule())
+                    .build();
+        }
+        return mApplicationComponent;
     }
 }

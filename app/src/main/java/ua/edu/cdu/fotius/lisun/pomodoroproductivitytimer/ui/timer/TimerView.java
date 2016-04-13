@@ -18,9 +18,9 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
 
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 
 public interface TimerView extends MvpView{
-    //TODO:
-    //updateTime() from service
+    //public void updateTime(Time currentTime);
 }

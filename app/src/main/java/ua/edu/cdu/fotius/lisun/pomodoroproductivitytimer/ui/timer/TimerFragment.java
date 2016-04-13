@@ -24,26 +24,39 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import timber.log.Timber;
+import rx.Subscription;
+import rx.functions.Action1;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.DaggerTimerFragmentComponent;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerTimerFragmentComponent;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerServiceConnection;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
 
 
-public class TimerFragment extends BaseFragment implements TimerView{
-
+public class TimerFragment extends BaseFragment implements TimerView {
     public static String FRAGMENT_TAG = "timer_fragment";
 
-    private Context mContext;
     @Inject
     TimerServiceConnection mServiceConnection;
+    @Inject
+    TimerEventBus mEventBus;
+    @Bind(R.id.countdown_minutes)
+    TextView mCountdownMinutes;
+    @Bind(R.id.countdown_seconds)
+    TextView mCountdownSeconds;
+
+    private Context mContext;
+    private Subscription mSubscription;
 
     @Override
     public void onAttach(Context context) {
@@ -54,8 +67,9 @@ public class TimerFragment extends BaseFragment implements TimerView{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.i("TimerFragment.onCreate");
         DaggerTimerFragmentComponent.builder()
+                .applicationComponent(PomodoroProductivityTimerApplication.get(mContext)
+                        .getApplicationComponent())
                 .build().inject(this);
     }
 
@@ -72,11 +86,21 @@ public class TimerFragment extends BaseFragment implements TimerView{
         super.onStart();
         Intent intent = new Intent(mContext, TimerService.class);
         mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        //TODO: use lambdas here
+        mSubscription = mEventBus.getObservable().subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object obj) {
+                updateTime((Time) obj);
+            }
+        });
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if((mSubscription != null) && !mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
+        }
         if(mServiceConnection.isConnected()) {
             mContext.unbindService(mServiceConnection);
         }
@@ -91,5 +115,10 @@ public class TimerFragment extends BaseFragment implements TimerView{
         } else {
             service.startTimer();
         }
+    }
+
+    public void updateTime(Time time) {
+        mCountdownMinutes.setText(time.minutesToString());
+        mCountdownSeconds.setText(time.secondsToString());
     }
 }
