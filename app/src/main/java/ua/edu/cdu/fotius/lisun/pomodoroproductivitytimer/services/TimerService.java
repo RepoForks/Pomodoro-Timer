@@ -96,6 +96,12 @@ public class TimerService extends Service {
         return mIsTimerRunning;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopTimer();
+    }
+
     //TODO:
     // setProject
     // setTime - time for this particular project
