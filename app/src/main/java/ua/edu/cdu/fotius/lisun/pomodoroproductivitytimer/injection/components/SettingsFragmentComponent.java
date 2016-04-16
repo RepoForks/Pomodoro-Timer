@@ -16,10 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+import dagger.Component;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.scopes.PerFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings.SettingsFragment;
 
-public interface SettingsView extends MvpView {
-
+@PerFragment
+@Component(dependencies = ApplicationComponent.class)
+public interface SettingsFragmentComponent {
+    void inject(SettingsFragment settingsFragment);
 }

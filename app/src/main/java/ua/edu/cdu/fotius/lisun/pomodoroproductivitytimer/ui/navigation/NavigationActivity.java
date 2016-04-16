@@ -31,6 +31,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings.SettingsFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.TimerFragment;
 
 public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -98,7 +99,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         } else if (id == R.id.nav_statistics) {
 
         } else if (id == R.id.nav_settings) {
-
+            setFragment(new SettingsFragment(), SettingsFragment.FRAGMENT_TAG);
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
@@ -108,7 +109,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
     * This method is intended for both "add"
     * and "replace" fragment operations
     */
-    private void setFragment(BaseFragment fragment, String tag) {
+    private void setFragment(Fragment fragment, String tag) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment, tag)
                 .commit();

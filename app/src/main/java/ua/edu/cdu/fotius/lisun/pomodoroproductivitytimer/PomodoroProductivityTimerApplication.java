@@ -45,7 +45,7 @@ public class PomodoroProductivityTimerApplication extends Application{
     public ApplicationComponent getApplicationComponent() {
         if(mApplicationComponent == null) {
             mApplicationComponent = DaggerApplicationComponent.builder()
-                    .applicationModule(new ApplicationModule())
+                    .applicationModule(new ApplicationModule(this))
                     .build();
         }
         return mApplicationComponent;
