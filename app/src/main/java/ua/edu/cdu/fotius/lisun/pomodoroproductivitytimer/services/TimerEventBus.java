@@ -27,9 +27,11 @@ import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
 import timber.log.Timber;
 
+@Singleton
 public class TimerEventBus {
     private Subject<Object, Object> mSubject = new SerializedSubject<>(PublishSubject.create());
 
+    @Inject
     public TimerEventBus() {
         Timber.i("TimerValueBus unique ID is: " + System.identityHashCode(this));
     }

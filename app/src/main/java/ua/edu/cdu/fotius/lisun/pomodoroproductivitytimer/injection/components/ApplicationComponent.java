@@ -21,6 +21,7 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesKeys;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.ApplicationModule;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
@@ -30,4 +31,5 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
 public interface ApplicationComponent {
     void inject(TimerService timerService);
     TimerEventBus provideTimerValueBus();
+    PreferencesKeys providePreferencesKeys();
 }

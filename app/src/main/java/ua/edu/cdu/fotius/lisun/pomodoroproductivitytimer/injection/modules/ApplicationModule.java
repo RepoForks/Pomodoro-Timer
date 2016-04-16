@@ -18,17 +18,38 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules;
 
+import android.app.Application;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesHelper;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
 
 @Module
 public class ApplicationModule {
-    @Provides
-    @Singleton
-    TimerEventBus provideTimerValueBus() {
-        return new TimerEventBus();
+
+    private Application mApplication;
+
+    public ApplicationModule(Application application) {
+        mApplication = application;
     }
+
+    @Provides
+    Application provideApplication() {
+        return mApplication;
+    }
+
+//    @Provides
+//    @Singleton
+//    PreferencesHelper providePreferencesHelper() {
+//        new PreferencesHelper();
+//    }
+//
+//    @Provides
+//    @Singleton
+//    TimerEventBus provideTimerValueBus() {
+//        return new TimerEventBus();
+//    }
 }

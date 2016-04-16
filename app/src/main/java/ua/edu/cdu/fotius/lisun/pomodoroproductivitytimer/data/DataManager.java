@@ -17,5 +17,14 @@
  */
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data;
 
+import javax.inject.Inject;
+
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesHelper;
+
 public class DataManager {
+
+    @Inject
+    PreferencesHelper mPreferences;
+
+
 }

@@ -18,43 +18,69 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 
+@Singleton
 public class PreferencesHelper {
 
-    private final String PREFS_FILE_NAME = "pomodoro_productivity_timer_prefs";
-    private final String WORK_SESSION_DURATION_KEY = "work_session_duration";
-    private final String SHORT_BREAK_DURATION_KEY = "short_break_duration";
-    private final String LONG_BREAK_DURATION_KEY = "long_break_duration";
-    private final String LONG_BREAK_INTERVAL_KEY = "long_break_interval";
+    @Inject
+    PreferencesKeys mPreferencesKeys;
 
     private SharedPreferences mSharedPrefs;
 
-    public PreferencesHelper(Context context) {
-        mSharedPrefs = context.getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
+    @Inject
+    public PreferencesHelper(Application application) {
+        mSharedPrefs = application
+                .getSharedPreferences(PreferencesKeys.PREFS_FILE_NAME, Context.MODE_PRIVATE);
     }
 
     public void save(Preferences prefs) {
         SharedPreferences.Editor editor = mSharedPrefs.edit();
-        editor.putLong(WORK_SESSION_DURATION_KEY, prefs.getWorkSessionDuration());
-        editor.putLong(SHORT_BREAK_DURATION_KEY, prefs.getShortBreakDuration());
-        editor.putLong(LONG_BREAK_DURATION_KEY, prefs.getLongBreakDuration());
-        editor.putLong(LONG_BREAK_INTERVAL_KEY, prefs.getLongBreakInterval());
-        editor.commit();
+        editor.putLong(mPreferencesKeys.getWorkSessionDuration(), prefs.getWorkSessionDuration());
+        editor.putLong(mPreferencesKeys.getShortBreakDuration(), prefs.getShortBreakDuration());
+        editor.putLong(mPreferencesKeys.getLongBreakDuration(), prefs.getLongBreakDuration());
+        editor.putLong(mPreferencesKeys.getLongBreakInterval(), prefs.getLongBreakInterval());
+        editor.apply();
+    }
+
+    public void saveItem(String key, String value) {
+        SharedPreferences.Editor editor = mSharedPrefs.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public void saveItem(String key, Long value) {
+        SharedPreferences.Editor editor = mSharedPrefs.edit();
+        editor.putLong(key, value);
+        editor.apply();
+    }
+
+    public void saveItem(String key, Integer value) {
+        SharedPreferences.Editor editor = mSharedPrefs.edit();
+        editor.putInt(key, value);
+        editor.apply();
     }
 
     public Preferences get() {
         long sessionDuration =
-                mSharedPrefs.getLong(WORK_SESSION_DURATION_KEY, Preferences.DefaultValues.WORK_SESSION_DURATION);
+                mSharedPrefs.getLong(mPreferencesKeys.getWorkSessionDuration(),
+                        Preferences.DefaultValues.WORK_SESSION_DURATION);
         long shortBreakDuration =
-                mSharedPrefs.getLong(SHORT_BREAK_DURATION_KEY, Preferences.DefaultValues.SHORT_BREAK_DURATION);
+                mSharedPrefs.getLong(mPreferencesKeys.getShortBreakDuration(),
+                        Preferences.DefaultValues.SHORT_BREAK_DURATION);
         long longBreakDuration =
-                mSharedPrefs.getLong(LONG_BREAK_DURATION_KEY, Preferences.DefaultValues.LONG_BREAK_DURATION);
+                mSharedPrefs.getLong(mPreferencesKeys.getLongBreakDuration(),
+                        Preferences.DefaultValues.LONG_BREAK_DURATION);
         int longBreakInterval =
-                mSharedPrefs.getInt(LONG_BREAK_INTERVAL_KEY, Preferences.DefaultValues.LONG_BREAK_INTERVAL);
+                mSharedPrefs.getInt(mPreferencesKeys.getLongBreakInterval(),
+                        Preferences.DefaultValues.LONG_BREAK_INTERVAL);
         return new Preferences()
                 .setWorkSessionDuration(sessionDuration)
                 .setShortBreakDuration(shortBreakDuration)
