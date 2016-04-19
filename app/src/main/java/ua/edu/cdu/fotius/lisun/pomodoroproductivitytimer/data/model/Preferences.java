@@ -18,53 +18,52 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
 
-//TODO: make builder for this
 public class Preferences {
 
     public interface DefaultValues {
-        long WORK_SESSION_DURATION = 25;
-        long SHORT_BREAK_DURATION = 5;
-        long LONG_BREAK_DURATION = 15;
-        int LONG_BREAK_INTERVAL = 4;
+        String WORK_SESSION_DURATION = "25";
+        String SHORT_BREAK_DURATION = "5";
+        String LONG_BREAK_DURATION = "15";
+        String LONG_BREAK_INTERVAL = "4";
     }
 
-    private long mWorkSessionDuration;
-    private long mShortBreakDuration;
-    private long mLongBreakDuration;
-    private int mLongBreakInterval;
+    private String mWorkSessionDuration;
+    private String mShortBreakDuration;
+    private String mLongBreakDuration;
+    private String mLongBreakInterval;
 
-    public long getWorkSessionDuration() {
+    public String getWorkSessionDuration() {
         return mWorkSessionDuration;
     }
 
-    public Preferences setWorkSessionDuration(long workSessionDuration) {
+    public Preferences setWorkSessionDuration(String workSessionDuration) {
         mWorkSessionDuration = workSessionDuration;
         return this;
     }
 
-    public long getShortBreakDuration() {
+    public String getShortBreakDuration() {
         return mShortBreakDuration;
     }
 
-    public Preferences setShortBreakDuration(long shortBreakDuration) {
+    public Preferences setShortBreakDuration(String shortBreakDuration) {
         mShortBreakDuration = shortBreakDuration;
         return this;
     }
 
-    public long getLongBreakDuration() {
+    public String getLongBreakDuration() {
         return mLongBreakDuration;
     }
 
-    public Preferences setLongBreakDuration(long longBreakDuration) {
+    public Preferences setLongBreakDuration(String longBreakDuration) {
         mLongBreakDuration = longBreakDuration;
         return this;
     }
 
-    public int getLongBreakInterval() {
+    public String getLongBreakInterval() {
         return mLongBreakInterval;
     }
 
-    public Preferences setLongBreakInterval(int longBreakInterval) {
+    public Preferences setLongBreakInterval(String longBreakInterval) {
         mLongBreakInterval = longBreakInterval;
         return this;
     }
