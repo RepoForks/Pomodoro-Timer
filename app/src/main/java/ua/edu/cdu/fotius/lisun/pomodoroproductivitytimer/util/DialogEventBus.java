@@ -16,12 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+import javax.inject.Inject;
 
-public interface SettingsView extends MvpView {
-    void setPreferencesSummary(Preferences preferences);
-    void setPreferenceSummary(String key, String value);
+import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.SerializedSubject;
+import rx.subjects.Subject;
+import timber.log.Timber;
+
+public class DialogEventBus<T> {
+    private Subject<T, T> mSubject = new SerializedSubject<>(PublishSubject.create());
+
+    @Inject
+    public DialogEventBus() {
+        Timber.i("TimerValueBus unique ID is: " + System.identityHashCode(this));
+    }
+
+    public void send(T object) {
+        mSubject.onNext(object);
+    }
+
+    public Observable<T> getObservable()  {
+        return mSubject;
+    }
 }

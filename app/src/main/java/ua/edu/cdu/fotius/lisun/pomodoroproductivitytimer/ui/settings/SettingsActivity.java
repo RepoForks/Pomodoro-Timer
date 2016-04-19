@@ -18,10 +18,27 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+import android.os.Bundle;
+import android.view.View;
 
-public interface SettingsView extends MvpView {
-    void setPreferencesSummary(Preferences preferences);
-    void setPreferenceSummary(String key, String value);
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.ToolbarActivity;
+
+public class SettingsActivity extends ToolbarActivity {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(!restoreFragment(savedInstanceState)) {
+            setFragment(new SettingsFragment(), SettingsFragment.FRAGMENT_TAG);
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        mToolbar.setNavigationOnClickListener(v -> finish());
+    }
+
+    @Override
+    protected int contentView() {
+        return R.layout.toolbar_main;
+    }
 }

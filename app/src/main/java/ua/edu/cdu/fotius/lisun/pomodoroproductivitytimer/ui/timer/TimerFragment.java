@@ -32,14 +32,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
-import rx.functions.Action1;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerTimerFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerServiceConnection;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
 
 
@@ -82,16 +81,18 @@ public class TimerFragment extends BaseFragment implements TimerView {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         Intent intent = new Intent(mContext, TimerService.class);
         mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
-        //TODO: use lambdas here
-        mSubscription = mEventBus.getObservable().subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object obj) {
-                updateTime((Time) obj);
-            }
+        mSubscription = mEventBus.getObservable().subscribe(obj -> {
+            updateTime((Time) obj);
         });
     }
 

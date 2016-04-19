@@ -17,14 +17,46 @@
  */
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data;
 
+
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import rx.Observable;
+import timber.log.Timber;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.DbHelper;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesHelper;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 
+@Singleton
 public class DataManager {
 
     @Inject
-    PreferencesHelper mPreferences;
+    PreferencesHelper mPreferencesHelper;
+    @Inject
+    DbHelper mDbHelper;
 
+    @Inject
+    public DataManager() {
+    }
 
+    public Observable<PreferencePair> savePreference(PreferencePair preferencePair) {
+        return Observable.fromCallable(() -> mPreferencesHelper.putPreference(preferencePair));
+    }
+
+    public Observable<Preferences> getPreferences() {
+        return Observable.fromCallable(() -> mPreferencesHelper.preferences());
+    }
+
+    public Observable<Project> saveProject(Project project) {
+        return Observable.fromCallable(() -> mDbHelper.save(project));
+    }
+
+    public Observable<List<Project>> getProjects() {
+        return Observable.fromCallable(() -> mDbHelper.projects());
+    }
 }

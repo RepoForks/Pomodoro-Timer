@@ -20,12 +20,8 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules;
 
 import android.app.Application;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesHelper;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
 
 @Module
 public class ApplicationModule {
