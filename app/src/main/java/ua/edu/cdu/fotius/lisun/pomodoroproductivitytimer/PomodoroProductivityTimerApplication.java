@@ -21,6 +21,8 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer;
 import android.app.Application;
 import android.content.Context;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.ApplicationComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerApplicationComponent;
@@ -37,6 +39,12 @@ public class PomodoroProductivityTimerApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
         if(BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
