@@ -17,6 +17,7 @@
  */
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.navigation;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -31,26 +32,24 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.ToolbarActivity;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.ProjectsFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings.SettingsActivity;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings.SettingsFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.TimerFragment;
 
-public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class NavigationActivity extends ToolbarActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.drawer_layout) DrawerLayout mDrawer;
     @Bind(R.id.nav_view) NavigationView mNavigationView;
 
-    public final String CURRENT_FRAGMENT_TAG_KEY = "current_fragment_key";
-    public Fragment mCurrentFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        setSupportActionBar(mToolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
         mNavigationView.setNavigationItemSelectedListener(this);
@@ -59,24 +58,15 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         }
     }
 
-    private boolean restoreFragment(Bundle savedInstanceState) {
-        if(savedInstanceState == null) return false;
-        String savedFragmentTag = savedInstanceState.getString(CURRENT_FRAGMENT_TAG_KEY);
-        mCurrentFragment = getSupportFragmentManager()
-                .findFragmentByTag(savedFragmentTag);
-        return true;
+    @Override
+    protected int contentView() {
+        return R.layout.activity_main;
     }
 
     private void setInitialFragment() {
         int defaultId = R.id.nav_timer;
         onNavigationItemSelected(mNavigationView.getMenu().findItem(defaultId));
         mNavigationView.setCheckedItem(defaultId);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(CURRENT_FRAGMENT_TAG_KEY, mCurrentFragment.getTag());
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -95,24 +85,14 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         if (id == R.id.nav_timer) {
             setFragment(new TimerFragment(), TimerFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_projects) {
-
+            setFragment(new ProjectsFragment(), ProjectsFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_statistics) {
 
         } else if (id == R.id.nav_settings) {
-            setFragment(new SettingsFragment(), SettingsFragment.FRAGMENT_TAG);
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    /*
-    * This method is intended for both "add"
-    * and "replace" fragment operations
-    */
-    private void setFragment(Fragment fragment, String tag) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment, tag)
-                .commit();
-        mCurrentFragment = fragment;
     }
 }

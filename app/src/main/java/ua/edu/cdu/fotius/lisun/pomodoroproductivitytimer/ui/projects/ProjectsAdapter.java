@@ -1,0 +1,86 @@
+/*
+ * Pomodoro Productivity Timer
+ * Copyright (C) 2016  Lisun Andrii
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
+
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
+
+public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHolder>{
+
+    private List<Project> mProjects;
+
+    @Inject
+    public ProjectsAdapter() {
+        mProjects = new ArrayList<>();
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.cardview_single_project, parent, false);
+        return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.mProjectName.setText(mProjects.get(position).getName());
+        holder.mCreationDate.setText(mProjects.get(position).getCreationDateString());
+    }
+
+    @Override
+    public int getItemCount() {
+        return mProjects.size();
+    }
+
+    public void setProjects(List<Project> projects) {
+        mProjects = projects;
+        notifyDataSetChanged();
+    }
+
+    public void addProject(Project project) {
+        mProjects.add(project);
+        notifyItemInserted(mProjects.size() - 1);
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.tv_project_name)
+        public TextView mProjectName;
+        @Bind(R.id.tv_creation_date)
+        public TextView mCreationDate;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+}

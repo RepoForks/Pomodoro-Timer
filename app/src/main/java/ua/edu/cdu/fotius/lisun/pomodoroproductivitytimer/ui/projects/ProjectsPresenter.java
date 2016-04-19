@@ -16,29 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
 
-import java.util.concurrent.Callable;
+import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.functions.Action1;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
 
-public class SettingsPresenter extends MvpPresenter<SettingsView> {
+public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
 
     private final DataManager mDataManager;
     private Subscription mSubscription;
 
     @Inject
-    public SettingsPresenter(DataManager dataManager) {
+    public ProjectsPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
 
@@ -54,9 +52,12 @@ public class SettingsPresenter extends MvpPresenter<SettingsView> {
         }
     }
 
-    public void savePreference(PreferencePair preferencePair) {
+    public void saveProject(String name) {
+        Project project = new Project();
+        project.setName(name);
+        project.setCreationDate(new Date());
         unsubscribe();
-        mSubscription = mDataManager.savePreference(preferencePair).subscribe(new Subscriber<PreferencePair>() {
+        mSubscription = mDataManager.saveProject(project).subscribe(new Subscriber<Project>() {
             @Override
             public void onCompleted() {
             }
@@ -67,29 +68,30 @@ public class SettingsPresenter extends MvpPresenter<SettingsView> {
             }
 
             @Override
-            public void onNext(PreferencePair preferencePair) {
-                getView().setPreferenceSummary(preferencePair.getKey(), preferencePair.getValue());
+            public void onNext(Project project) {
+                getView().showNewProject(project);
             }
         });
     }
 
-    public void loadPreferences() {
+    public void getProjects() {
         unsubscribe();
-        mSubscription = mDataManager.getPreferences()
-                .subscribe(new Subscriber<Preferences>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+        //TODO: change Subscriber, because don't need onCompleted
+        mSubscription = mDataManager.getProjects().subscribe(new Subscriber<List<Project>>() {
+            @Override
+            public void onCompleted() {
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "");
-                    }
+            }
 
-                    @Override
-                    public void onNext(Preferences preferences) {
-                        getView().setPreferencesSummary(preferences);
-                    }
-                });
+            @Override
+            public void onError(Throwable e) {
+                Timber.e(e, "");
+            }
+
+            @Override
+            public void onNext(List<Project> projects) {
+                getView().showProjects(projects);
+            }
+        });
     }
 }
