@@ -41,6 +41,7 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHolder>{
 
     private List<Project> mProjects;
+    private PopupMenu.OnMenuItemClickListener mMenuItemClickListener;
 
     @Inject
     public ProjectsAdapter() {
@@ -76,7 +77,11 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
         notifyItemInserted(mProjects.size() - 1);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements PopupMenu.OnMenuItemClickListener{
+    public void setMenuItemClickListener(PopupMenu.OnMenuItemClickListener listener) {
+        mMenuItemClickListener = listener;
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tv_project_name)
         public TextView mProjectName;
         @Bind(R.id.tv_creation_date)
@@ -91,19 +96,8 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
         public void showItemMenu(View v) {
             PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.inflate(R.menu.menu_project_overflow);
-            popup.setOnMenuItemClickListener(this);
+            popup.setOnMenuItemClickListener(mMenuItemClickListener);
             popup.show();
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            Timber.i("Menu item %s clicked", item.getItemId());
-            if(item.getItemId() == R.id.mpo_delete) {
-
-            } else if(item.getItemId() == R.id.mpo_rename) {
-
-            }
-            return true;
         }
     }
 }

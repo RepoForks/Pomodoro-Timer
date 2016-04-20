@@ -27,12 +27,14 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.Appli
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.NumberDialogFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.ProjectNameDialogFragment;
 
 @Singleton
 @Component(modules = ApplicationModule.class)
 public interface ApplicationComponent {
     void inject(TimerService timerService);
     void inject(NumberDialogFragment numberDialogFragment);
+    void inject(ProjectNameDialogFragment projectNameDialogFragment);
     RxBus provideTimerValueBus();
     PreferencesKeys providePreferencesKeys();
     DataManager provideDataManager();
