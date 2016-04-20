@@ -18,37 +18,33 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import javax.inject.Inject;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
+import rx.functions.Action1;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerTimerFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerServiceConnection;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
 
 
-public class TimerFragment extends BaseFragment implements TimerView {
+public class TimerFragment extends BaseFragment implements TimerView, ServiceConnection {
     public static String FRAGMENT_TAG = "timer_fragment";
 
-    @Inject
-    TimerServiceConnection mServiceConnection;
-    @Inject
-    TimerEventBus mEventBus;
     @Bind(R.id.countdown_minutes)
     TextView mCountdownMinutes;
     @Bind(R.id.countdown_seconds)
@@ -56,6 +52,7 @@ public class TimerFragment extends BaseFragment implements TimerView {
 
     private Context mContext;
     private Subscription mSubscription;
+    private TimerService mService;
 
     @Override
     public void onAttach(Context context) {
@@ -90,36 +87,43 @@ public class TimerFragment extends BaseFragment implements TimerView {
     public void onStart() {
         super.onStart();
         Intent intent = new Intent(mContext, TimerService.class);
-        mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
-        mSubscription = mEventBus.getObservable().subscribe(obj -> {
-            updateTime((Time) obj);
-        });
+        mContext.bindService(intent, this, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if((mSubscription != null) && !mSubscription.isUnsubscribed()) {
-            mSubscription.unsubscribe();
-        }
-        if(mServiceConnection.isConnected()) {
-            mContext.unbindService(mServiceConnection);
-        }
+        mContext.unbindService(this);
     }
 
     @OnClick(R.id.fab_start_stop_timer)
     void startStopTimer() {
-        TimerService service = mServiceConnection.getService();
         //TODO: also change fab image here
-        if(service.isTimerRunning()) {
-            service.stopTimer();
+        if(mService.isTimerRunning()) {
+            mService.stopTimer();
         } else {
-            service.startTimer();
+            mService.startTimer();
         }
     }
 
+    @Override
     public void updateTime(Time time) {
         mCountdownMinutes.setText(time.minutesToString());
         mCountdownSeconds.setText(time.secondsToString());
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        TimerService.Binder binder = (TimerService.Binder) service;
+        mService = binder.getService();
+        mSubscription = binder.getObservable().subscribe(this::updateTime);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        mService = null;
+        if(mSubscription != null) {
+            mSubscription.unsubscribe();
+        }
     }
 }

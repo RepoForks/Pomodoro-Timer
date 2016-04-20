@@ -26,11 +26,17 @@ import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
 
 public class TimerService extends Service {
 
-    class Binder extends android.os.Binder {
+    public class Binder extends android.os.Binder {
+        public Observable<Time> getObservable() {
+            return mEventBus.getObservable(Time.class);
+        }
+
         public TimerService getService() {
             return TimerService.this;
         }
@@ -40,10 +46,10 @@ public class TimerService extends Service {
     private final int TOTAL_TIME = 25000;
     private final int SINGLE_ITERATION_TIME = 10;
 
-    private android.os.Binder mBinder = new Binder();
+    private android.os.Binder mBinder;
 
     @Inject
-    TimerEventBus mEventBus;
+    RxBus mEventBus;
     private CountDownTimer mTimer;
     private boolean mIsTimerRunning;
 
@@ -51,6 +57,7 @@ public class TimerService extends Service {
     public void onCreate() {
         super.onCreate();
         PomodoroProductivityTimerApplication.get(this).getApplicationComponent().inject(this);
+        mBinder = new Binder();
     }
 
     @Nullable
