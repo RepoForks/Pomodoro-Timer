@@ -33,54 +33,26 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 
 public class DialogFactory {
 
-    public static final int NUMBER_PICKER_DEFAULT_MAX = 99;
-    public static final int NUMBER_PICKER_DEFAULT_MIN = 2;
-
-    public static Dialog createNumberPickerDialog(Context context, String title,
-                                                  DialogEventBus eventBus,
-                                                  String preferenceKey) {
-        NumberPicker numberPicker = new NumberPicker(context);
-        numberPicker.setMaxValue(NUMBER_PICKER_DEFAULT_MAX);
-        numberPicker.setMinValue(NUMBER_PICKER_DEFAULT_MIN);
-        numberPicker.setWrapSelectorWheel(false);
-        FrameLayout.LayoutParams params = new FrameLayout
-                .LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-        FrameLayout frameLayout = new FrameLayout(context);
-        frameLayout.addView(numberPicker, params);
-
-        return new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setView(frameLayout)
-                .setPositiveButton(context.getString(R.string.dialog_positive_button),
-                        (dialog, which) -> eventBus.send(
-                                new PreferencePair(preferenceKey,
-                                        Integer.toString(numberPicker.getValue()))))
-                .setNegativeButton(context.getString(R.string.dialog_negative_button),
-                        (dialog, which) -> dialog.dismiss())
-                .create();
-    }
-
-    public static Dialog createUpdateProjectDialog(Context context, String title,
-                                                   DialogEventBus eventBus, Project project) {
-        FrameLayout.LayoutParams params = new FrameLayout
-                .LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-        FrameLayout frameLayout = new FrameLayout(context);
-        EditText editText = new EditText(context);
-        frameLayout.addView(editText, params);
-
-        return new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setView(frameLayout)
-                .setPositiveButton(context.getString(R.string.dialog_positive_button),
-                        (dialog, which) -> {
-                            project.setName(editText.getText().toString());
-                            eventBus.send(project);
-                        })
-                .setNegativeButton(context.getString(R.string.dialog_negative_button),
-                        (dialog, which) -> dialog.dismiss())
-                .create();
-    }
+//    public static Dialog createUpdateProjectDialog(Context context, String title,
+//                                                   DialogEventBus eventBus, Project project) {
+//        FrameLayout.LayoutParams params = new FrameLayout
+//                .LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+//        FrameLayout frameLayout = new FrameLayout(context);
+//        EditText editText = new EditText(context);
+//        frameLayout.addView(editText, params);
+//
+//        return new AlertDialog.Builder(context)
+//                .setTitle(title)
+//                .setView(frameLayout)
+//                .setPositiveButton(context.getString(R.string.dialog_positive_button),
+//                        (dialog, which) -> {
+//                            project.setName(editText.getText().toString());
+//                            eventBus.send(project);
+//                        })
+//                .setNegativeButton(context.getString(R.string.dialog_negative_button),
+//                        (dialog, which) -> dialog.dismiss())
+//                .create();
+//    }
 
 }
