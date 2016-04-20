@@ -18,8 +18,10 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
 
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,6 +33,8 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 
@@ -72,7 +76,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
         notifyItemInserted(mProjects.size() - 1);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements PopupMenu.OnMenuItemClickListener{
         @Bind(R.id.tv_project_name)
         public TextView mProjectName;
         @Bind(R.id.tv_creation_date)
@@ -81,6 +85,25 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+
+        @OnClick(R.id.ib_menu)
+        public void showItemMenu(View v) {
+            PopupMenu popup = new PopupMenu(v.getContext(), v);
+            popup.inflate(R.menu.menu_project_overflow);
+            popup.setOnMenuItemClickListener(this);
+            popup.show();
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            Timber.i("Menu item %s clicked", item.getItemId());
+            if(item.getItemId() == R.id.mpo_delete) {
+
+            } else if(item.getItemId() == R.id.mpo_rename) {
+
+            }
+            return true;
         }
     }
 }

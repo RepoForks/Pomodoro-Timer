@@ -76,11 +76,9 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
 
     public void getProjects() {
         unsubscribe();
-        //TODO: change Subscriber, because don't need onCompleted
         mSubscription = mDataManager.getProjects().subscribe(new Subscriber<List<Project>>() {
             @Override
             public void onCompleted() {
-
             }
 
             @Override
@@ -90,7 +88,11 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
 
             @Override
             public void onNext(List<Project> projects) {
-                getView().showProjects(projects);
+                if(projects.isEmpty()) {
+                    getView().showNoProjects();
+                } else {
+                    getView().showProjects(projects);
+                }
             }
         });
     }

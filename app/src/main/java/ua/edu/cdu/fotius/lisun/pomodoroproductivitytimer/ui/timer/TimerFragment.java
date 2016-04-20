@@ -107,7 +107,7 @@ public class TimerFragment extends BaseFragment implements TimerView {
         }
     }
 
-    @OnClick(R.id.fab)
+    @OnClick(R.id.fab_start_stop_timer)
     void startStopTimer() {
         TimerService service = mServiceConnection.getService();
         //TODO: also change fab image here

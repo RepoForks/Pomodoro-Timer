@@ -60,7 +60,6 @@ public class TimerService extends Service {
     }
 
     public void startTimer() {
-        //TODO: maybe to separate class
         mTimer = new CountDownTimer(TOTAL_TIME, SINGLE_ITERATION_TIME) {
             @Override
             public void onTick(long millisUntilFinished) {

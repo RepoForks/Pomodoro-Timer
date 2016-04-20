@@ -21,21 +21,23 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
-import rx.functions.Action1;
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -46,7 +48,7 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.DialogFactory;
 
 import static butterknife.ButterKnife.findById;
 
-public class ProjectsFragment extends BaseFragment implements ProjectsView{
+public class ProjectsFragment extends BaseFragment implements ProjectsView {
 
     public static final String FRAGMENT_TAG = "projects_fragment";
 
@@ -56,6 +58,9 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView{
     DialogEventBus<String> mDialogEventBus;
     @Inject
     ProjectsPresenter mPresenter;
+
+    @Bind(R.id.fab_new_project)
+    FloatingActionButton mNewProjectFab;
 
     private Context mContext;
     private Subscription mDialogEventsSubscription;
@@ -74,7 +79,6 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView{
                         .getApplicationComponent())
                 .build().inject(this);
         mPresenter.attach(this);
-        mPresenter.getProjects();
     }
 
     @Override
@@ -87,10 +91,11 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_projects, container, false);
-        RecyclerView recyclerView = findById(v, R.id.recycler_view);
+        RecyclerView recyclerView = findById(v, R.id.rv_projects);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setAdapter(mProjectsAdapter);
         ButterKnife.bind(this, v);
+        mPresenter.getProjects();
         return v;
     }
 
@@ -110,7 +115,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView{
     @Override
     public void onStop() {
         super.onStop();
-        if((mDialogEventsSubscription != null) &&
+        if ((mDialogEventsSubscription != null) &&
                 (!mDialogEventsSubscription.isUnsubscribed())) {
             mDialogEventsSubscription.unsubscribe();
         }
@@ -123,7 +128,10 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView{
 
     @Override
     public void showNoProjects() {
-        //TODO: show empty message
+        mProjectsAdapter.setProjects(new ArrayList<>());
+        Snackbar.make(mNewProjectFab, R.string.fragment_no_projects_message,
+                Snackbar.LENGTH_SHORT)
+                .show();
     }
 
     @Override
@@ -131,8 +139,10 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView{
         mProjectsAdapter.addProject(project);
     }
 
-    @OnClick(R.id.fab)
+    @OnClick(R.id.fab_new_project)
     public void addProjectClicked() {
-        DialogFactory.createNewProjectDialog(mContext, "New project", mDialogEventBus, "").show();
+        DialogFactory.createNewProjectDialog(mContext, getString(R.string.dialog_new_project_title),
+                mDialogEventBus, "")
+                .show();
     }
 }

@@ -29,6 +29,7 @@ public class Project extends RealmObject {
     private long id;
     private String name;
     private Date creationDate;
+    private long workSessionDuration;
 
     public long getId() {
         return id;
@@ -56,5 +57,13 @@ public class Project extends RealmObject {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public long getWorkSessionDuration() {
+        return workSessionDuration;
+    }
+
+    public void setWorkSessionDuration(long workSessionDuration) {
+        this.workSessionDuration = workSessionDuration;
     }
 }
