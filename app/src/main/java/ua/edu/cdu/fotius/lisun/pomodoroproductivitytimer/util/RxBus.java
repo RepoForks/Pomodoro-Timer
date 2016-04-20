@@ -16,18 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import timber.log.Timber;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.BaseEventBus;
+import rx.Observable;
+import rx.functions.Func1;
+import rx.subjects.PublishSubject;
+import rx.subjects.SerializedSubject;
+import rx.subjects.Subject;
 
 @Singleton
-public class TimerEventBus extends BaseEventBus<Time> {
+public class RxBus {
+    private Subject<Object, Object> mSubject = new SerializedSubject<>(PublishSubject.create());
+
     @Inject
-    public TimerEventBus() {
-        Timber.i("TimerValueBus unique ID is: " + System.identityHashCode(this));
+    public RxBus() {
+    }
+
+    public void send(Object object) {
+        mSubject.onNext(object);
+    }
+
+    public <T> Observable<T> getObservable(Class<T> clazz)  {
+        return (Observable<T>) mSubject.filter(clazz::isInstance);
     }
 }

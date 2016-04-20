@@ -44,7 +44,6 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerProjectsFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.BaseEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.DialogEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.DialogFactory;
 

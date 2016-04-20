@@ -24,15 +24,14 @@ import dagger.Component;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesKeys;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.ApplicationModule;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
 
 @Singleton
 @Component(modules = ApplicationModule.class)
 public interface ApplicationComponent {
     void inject(TimerService timerService);
-    TimerEventBus provideTimerValueBus();
+    RxBus provideTimerValueBus();
     PreferencesKeys providePreferencesKeys();
     DataManager provideDataManager();
 }

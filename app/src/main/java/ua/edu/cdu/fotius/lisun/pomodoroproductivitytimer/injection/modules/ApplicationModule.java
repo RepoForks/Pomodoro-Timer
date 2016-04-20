@@ -36,16 +36,4 @@ public class ApplicationModule {
     Application provideApplication() {
         return mApplication;
     }
-
-//    @Provides
-//    @Singleton
-//    PreferencesHelper providePreferencesHelper() {
-//        new PreferencesHelper();
-//    }
-//
-//    @Provides
-//    @Singleton
-//    TimerEventBus provideTimerValueBus() {
-//        return new TimerEventBus();
-//    }
 }
