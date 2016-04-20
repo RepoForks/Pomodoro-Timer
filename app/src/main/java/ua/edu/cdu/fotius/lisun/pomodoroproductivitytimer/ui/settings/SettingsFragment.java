@@ -26,6 +26,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import javax.inject.Inject;
 
 import rx.Subscription;
+import rx.functions.Action1;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesKeys;
@@ -44,7 +45,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     @Inject
     SettingsPresenter mPresenter;
     @Inject
-    DialogEventBus<PreferencePair> mEventBus;
+    DialogEventBus mEventBus;
 
     private Subscription mDialogEventsSubscription;
     private Context mContext;
@@ -72,7 +73,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     public void onStart() {
         super.onStart();
         mDialogEventsSubscription = mEventBus.getObservable()
-                .subscribe(preferencePair -> mPresenter.savePreference(preferencePair));
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        mPresenter.savePreference((PreferencePair) o);
+                    }
+                });
     }
 
     @Override

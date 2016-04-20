@@ -20,25 +20,11 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
-import timber.log.Timber;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.scopes.PerFragment;
 
-public class DialogEventBus<T> {
-    private Subject<T, T> mSubject = new SerializedSubject<>(PublishSubject.create());
-
+@PerFragment
+public class DialogEventBus extends BaseEventBus<Object> {
     @Inject
     public DialogEventBus() {
-        Timber.i("TimerValueBus unique ID is: " + System.identityHashCode(this));
-    }
-
-    public void send(T object) {
-        mSubject.onNext(object);
-    }
-
-    public Observable<T> getObservable()  {
-        return mSubject;
     }
 }

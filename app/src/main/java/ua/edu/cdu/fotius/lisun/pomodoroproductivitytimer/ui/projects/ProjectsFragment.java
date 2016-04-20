@@ -38,11 +38,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
+import rx.functions.Action1;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerProjectsFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.BaseEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.DialogEventBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.DialogFactory;
 
@@ -55,7 +57,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     @Inject
     ProjectsAdapter mProjectsAdapter;
     @Inject
-    DialogEventBus<String> mDialogEventBus;
+    DialogEventBus mDialogEventBus;
     @Inject
     ProjectsPresenter mPresenter;
 
@@ -109,7 +111,12 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     public void onStart() {
         super.onStart();
         mDialogEventsSubscription = mDialogEventBus.getObservable()
-                .subscribe(s -> mPresenter.saveProject(s));
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        mPresenter.saveProject((Project) o);
+                    }
+                });
     }
 
     @Override
@@ -141,8 +148,8 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
 
     @OnClick(R.id.fab_new_project)
     public void addProjectClicked() {
-        DialogFactory.createNewProjectDialog(mContext, getString(R.string.dialog_new_project_title),
-                mDialogEventBus, "")
+        DialogFactory.createUpdateProjectDialog(mContext, getString(R.string.dialog_new_project_title),
+                mDialogEventBus, new Project())
                 .show();
     }
 }

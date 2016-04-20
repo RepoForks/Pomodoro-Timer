@@ -52,9 +52,7 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
         }
     }
 
-    public void saveProject(String name) {
-        Project project = new Project();
-        project.setName(name);
+    public void saveProject(Project project) {
         project.setCreationDate(new Date());
         unsubscribe();
         mSubscription = mDataManager.saveProject(project).subscribe(new Subscriber<Project>() {

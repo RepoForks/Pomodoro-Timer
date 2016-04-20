@@ -27,9 +27,9 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
 
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 
 public class DialogFactory {
 
@@ -61,8 +61,8 @@ public class DialogFactory {
                 .create();
     }
 
-    public static Dialog createNewProjectDialog(Context context, String title,
-                                                  DialogEventBus eventBus, String initValue) {
+    public static Dialog createUpdateProjectDialog(Context context, String title,
+                                                   DialogEventBus eventBus, Project project) {
         FrameLayout.LayoutParams params = new FrameLayout
                 .LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
@@ -74,7 +74,10 @@ public class DialogFactory {
                 .setTitle(title)
                 .setView(frameLayout)
                 .setPositiveButton(context.getString(R.string.dialog_positive_button),
-                        (dialog, which) -> eventBus.send(editText.getText().toString()))
+                        (dialog, which) -> {
+                            project.setName(editText.getText().toString());
+                            eventBus.send(project);
+                        })
                 .setNegativeButton(context.getString(R.string.dialog_negative_button),
                         (dialog, which) -> dialog.dismiss())
                 .create();

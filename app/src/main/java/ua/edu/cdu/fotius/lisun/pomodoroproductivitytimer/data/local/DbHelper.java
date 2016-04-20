@@ -36,17 +36,19 @@ public class DbHelper {
     public Project save(Project project) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        setProjectId(realm, project);
-        realm.copyToRealm(project);
+        setProjectIdIfUnset(realm, project);
+        realm.copyToRealmOrUpdate(project);
         realm.commitTransaction();
         realm.close();
         return project;
     }
 
-    private void setProjectId(Realm realm, Project project) {
-        Number id = realm.where(Project.class).max("id");
-        long nextId = (id == null) ? 1 : id.longValue() + 1;
-        project.setId(nextId);
+    private void setProjectIdIfUnset(Realm realm, Project project) {
+        if (project.getId() == Project.NO_ID_VALUE) {
+            Number id = realm.where(Project.class).max("id");
+            long nextId = (id == null) ? 1 : id.longValue() + 1;
+            project.setId(nextId);
+        }
     }
 
     public List<Project> projects() {

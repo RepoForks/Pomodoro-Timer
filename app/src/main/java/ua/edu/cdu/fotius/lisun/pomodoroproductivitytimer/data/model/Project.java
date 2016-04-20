@@ -21,12 +21,16 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Project extends RealmObject {
 
+    @Ignore
+    public static final long NO_ID_VALUE = -1;
+
     @PrimaryKey
-    private long id;
+    private long id = NO_ID_VALUE;
     private String name;
     private Date creationDate;
     private long workSessionDuration;
