@@ -40,6 +40,7 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.Da
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
 
 
 public class TimerFragment extends BaseFragment implements TimerView, ServiceConnection {
@@ -93,6 +94,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     @Override
     public void onStop() {
         super.onStop();
+        RxUtil.unsubscribe(mSubscription);
         mContext.unbindService(this);
     }
 
@@ -122,8 +124,5 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     @Override
     public void onServiceDisconnected(ComponentName name) {
         mService = null;
-        if(mSubscription != null) {
-            mSubscription.unsubscribe();
-        }
     }
 }

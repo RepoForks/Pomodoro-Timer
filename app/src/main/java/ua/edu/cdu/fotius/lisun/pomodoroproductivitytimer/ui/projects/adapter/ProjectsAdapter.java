@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.adapter;
 
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -34,18 +34,21 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
 
 public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHolder>{
 
     private List<Project> mProjects;
-    private PopupMenu.OnMenuItemClickListener mMenuItemClickListener;
+    private RxBus mRxBus;
 
     @Inject
-    public ProjectsAdapter() {
+    public ProjectsAdapter(RxBus rxBus) {
         mProjects = new ArrayList<>();
+        mRxBus = rxBus;
     }
 
     @Override
@@ -77,11 +80,13 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
         notifyItemInserted(mProjects.size() - 1);
     }
 
-    public void setMenuItemClickListener(PopupMenu.OnMenuItemClickListener listener) {
-        mMenuItemClickListener = listener;
+    public Observable<MenuClickResult> getObserver() {
+        return mRxBus.getObservable(MenuClickResult.class);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder
+            implements PopupMenu.OnMenuItemClickListener {
+
         @Bind(R.id.tv_project_name)
         public TextView mProjectName;
         @Bind(R.id.tv_creation_date)
@@ -96,8 +101,22 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
         public void showItemMenu(View v) {
             PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.inflate(R.menu.menu_project_overflow);
-            popup.setOnMenuItemClickListener(mMenuItemClickListener);
+            popup.setOnMenuItemClickListener(this);
             popup.show();
         }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            String action = null;
+            if(item.getItemId() == R.id.mpo_delete) {
+                action = MenuClickResult.ACTION_DELETE;
+            } else if(item.getItemId() == R.id.mpo_rename) {
+                action = MenuClickResult.ACTION_RENAME;
+            }
+            Project project = mProjects.get(getLayoutPosition());
+            mRxBus.send(new MenuClickResult(action, project));
+            return true;
+        }
     }
+
 }

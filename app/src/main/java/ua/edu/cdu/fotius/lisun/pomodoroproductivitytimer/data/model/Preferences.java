@@ -21,10 +21,10 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
 public class Preferences {
 
     public interface DefaultValues {
-        String WORK_SESSION_DURATION = "25";
-        String SHORT_BREAK_DURATION = "5";
-        String LONG_BREAK_DURATION = "15";
-        String LONG_BREAK_INTERVAL = "4";
+        long WORK_SESSION_DURATION = 25L;
+        long SHORT_BREAK_DURATION = 5L;
+        long LONG_BREAK_DURATION = 15L;
+        long LONG_BREAK_INTERVAL = 4L;
     }
 
     private String mWorkSessionDuration;

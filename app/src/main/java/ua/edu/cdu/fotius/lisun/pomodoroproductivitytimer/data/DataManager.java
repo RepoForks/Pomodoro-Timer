@@ -52,8 +52,16 @@ public class DataManager {
         return Observable.fromCallable(() -> mPreferencesHelper.preferences());
     }
 
-    public Observable<Project> saveProject(Project project) {
-        return Observable.fromCallable(() -> mDbHelper.save(project));
+    public Observable<Project> createProject(String name) {
+        return Observable.fromCallable(() -> mDbHelper.newProject(name));
+    }
+
+    public Observable<Project> renameProject(long id, String name) {
+        return Observable.fromCallable(() -> mDbHelper.renameProject(id, name));
+    }
+
+    public Observable<Project> deleteProject(long id) {
+        return Observable.fromCallable(() -> mDbHelper.deleteProject(id));
     }
 
     public Observable<List<Project>> getProjects() {

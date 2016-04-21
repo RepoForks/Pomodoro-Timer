@@ -53,16 +53,16 @@ public class PreferencesHelper {
     public Preferences preferences() {
         String sessionDuration =
                 mSharedPrefs.getString(mPreferencesKeys.getWorkSessionDuration(),
-                        Preferences.DefaultValues.WORK_SESSION_DURATION);
+                        Long.toString(Preferences.DefaultValues.WORK_SESSION_DURATION));
         String shortBreakDuration =
                 mSharedPrefs.getString(mPreferencesKeys.getShortBreakDuration(),
-                        Preferences.DefaultValues.SHORT_BREAK_DURATION);
+                        Long.toString(Preferences.DefaultValues.SHORT_BREAK_DURATION));
         String longBreakDuration =
                 mSharedPrefs.getString(mPreferencesKeys.getLongBreakDuration(),
-                        Preferences.DefaultValues.LONG_BREAK_DURATION);
+                        Long.toString(Preferences.DefaultValues.LONG_BREAK_DURATION));
         String longBreakInterval =
                 mSharedPrefs.getString(mPreferencesKeys.getLongBreakInterval(),
-                        Preferences.DefaultValues.LONG_BREAK_INTERVAL);
+                        Long.toString(Preferences.DefaultValues.LONG_BREAK_INTERVAL));
         return new Preferences()
                 .setWorkSessionDuration(sessionDuration)
                 .setShortBreakDuration(shortBreakDuration)

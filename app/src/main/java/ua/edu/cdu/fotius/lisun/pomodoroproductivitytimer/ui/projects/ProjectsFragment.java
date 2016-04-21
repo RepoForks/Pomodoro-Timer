@@ -24,10 +24,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,20 +39,21 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerProjectsFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.DialogFactory;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.adapter.MenuClickResult;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.adapter.ProjectsAdapter;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.ProjectNameDialogFragment;
 
 import static butterknife.ButterKnife.findById;
 
-public class ProjectsFragment extends BaseFragment implements ProjectsView, PopupMenu.OnMenuItemClickListener {
+public class ProjectsFragment extends BaseFragment implements ProjectsView {
 
     public static final String FRAGMENT_TAG = "projects_fragment";
 
@@ -69,7 +68,10 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView, Popu
     FloatingActionButton mNewProjectFab;
 
     private Context mContext;
-    private Subscription mSubscription;
+
+    private Subscription mDialogSubscription;
+    private Subscription mMenuSubscription;
+
 
     @Override
     public void onAttach(Context context) {
@@ -99,7 +101,6 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView, Popu
         View v = inflater.inflate(R.layout.fragment_projects, container, false);
         RecyclerView recyclerView = findById(v, R.id.rv_projects);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mProjectsAdapter.setMenuItemClickListener(this);
         recyclerView.setAdapter(mProjectsAdapter);
         ButterKnife.bind(this, v);
         mPresenter.getProjects();
@@ -113,12 +114,25 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView, Popu
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mMenuSubscription = mProjectsAdapter.getObserver().subscribe(new Action1<MenuClickResult>() {
+            @Override
+            public void call(MenuClickResult menuClickResult) {
+                if(menuClickResult.getAction() == MenuClickResult.ACTION_RENAME) {
+                    Timber.i("ACTION_RENAME");
+                } else if(menuClickResult.getAction() == MenuClickResult.ACTION_DELETE) {
+                    Timber.i("ACTION_DELETE");
+                }
+            }
+        });
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        if ((mSubscription != null) &&
-                (!mSubscription.isUnsubscribed())) {
-            mSubscription.unsubscribe();
-        }
+        RxUtil.unsubscribe(mMenuSubscription);
+        RxUtil.unsubscribe(mDialogSubscription);
     }
 
     @Override
@@ -141,23 +155,9 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView, Popu
 
     @OnClick(R.id.fab_new_project)
     public void addProjectClicked() {
-        mSubscription = ProjectNameDialogFragment
+        RxUtil.unsubscribe(mDialogSubscription);
+        mDialogSubscription = ProjectNameDialogFragment
                 .show(getFragmentManager(), mRxBus, getString(R.string.dialog_new_project_title), "")
-                .map(result -> {
-                    Project project = new Project();
-                    project.setName(result.getNewName());
-                    return project;
-                })
-                .subscribe(project -> mPresenter.saveProject(project));
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        if(item.getItemId() == R.id.mpo_delete) {
-            Timber.i("Delete");
-        } else if(item.getItemId() == R.id.mpo_rename) {
-            Timber.i("Rename");
-        }
-        return true;
+                .subscribe(result -> mPresenter.createProject(result.getNewName()));
     }
 }
