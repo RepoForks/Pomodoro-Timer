@@ -80,6 +80,21 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
         notifyItemInserted(mProjects.size() - 1);
     }
 
+    public void renameProject(int position, String newName) {
+        mProjects.get(position).setName(newName);
+        notifyItemChanged(position);
+    }
+
+    public void deleteProject(int position) {
+        mProjects.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void insertProject(Project project, int position) {
+        mProjects.add(position, project);
+        notifyItemInserted(position);
+    }
+
     public Observable<MenuClickResult> getObserver() {
         return mRxBus.getObservable(MenuClickResult.class);
     }
@@ -113,8 +128,9 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
             } else if(item.getItemId() == R.id.mpo_rename) {
                 action = MenuClickResult.ACTION_RENAME;
             }
-            Project project = mProjects.get(getLayoutPosition());
-            mRxBus.send(new MenuClickResult(action, project));
+            int position = getLayoutPosition();
+            Project project = mProjects.get(position);
+            mRxBus.send(new MenuClickResult(action, project, position));
             return true;
         }
     }

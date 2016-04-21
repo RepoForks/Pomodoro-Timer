@@ -26,10 +26,12 @@ public class MenuClickResult {
 
     private String mAction;
     private Project mProject;
+    private int mAdapterPosition;
 
-    public MenuClickResult(String action, Project project) {
+    public MenuClickResult(String action, Project project, int adapterPosition) {
         mAction = action;
         mProject = project;
+        mAdapterPosition = adapterPosition;
     }
 
     public String getAction() {
@@ -38,5 +40,9 @@ public class MenuClickResult {
 
     public Project getProject() {
         return mProject;
+    }
+
+    public int getAdapterPosition() {
+        return mAdapterPosition;
     }
 }

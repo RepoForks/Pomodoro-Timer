@@ -44,8 +44,13 @@
     <string name="dialog_positive_button">OK</string>
     <string name="dialog_negative_button">CANCEL</string>
     <string name="dialog_new_project_title">New project</string>
-    <string name="fragment_no_projects_message">You have no projects</string>
     <string name="menu_project_overflow_rename">Rename</string>
     <string name="menu_project_overflow_delete">Delete</string>
+    <string name="dialog_rename_project_title">Rename project</string>
+
+    <string name="snack_msg_delete">Project \"%1$s\" deleted</string>
+    <string name="snack_msg_rename">Project \"%1$s\" renamed to \"%2$s\"</string>
+    <string name="snack_msg_no_projects">You have no projects</string>
+    <string name="snack_undo">UNDO</string>
 
 </resources>

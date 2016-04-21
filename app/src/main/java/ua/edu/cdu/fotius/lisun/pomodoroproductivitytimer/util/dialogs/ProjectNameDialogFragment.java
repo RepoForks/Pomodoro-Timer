@@ -36,12 +36,13 @@ import javax.inject.Inject;
 import rx.Observable;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
 
 public class ProjectNameDialogFragment extends DialogFragment {
 
-    public static Observable<Result> show(FragmentManager fragmentManager,
-                                          RxBus rxBus, String title, String initValue) {
+    public static Observable<Result> show(FragmentManager fragmentManager, RxBus rxBus,
+                                          String title, String initValue) {
         Bundle args = new Bundle();
         args.putString(KEY_INIT_VALUE, initValue);
         args.putString(KEY_TITLE, title);
@@ -76,6 +77,9 @@ public class ProjectNameDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         EditText editText = new EditText(mContext);
+        String initText = getArguments().getString(KEY_INIT_VALUE, "");
+        editText.setText(initText);
+        editText.setSelection(initText.length());
         return new AlertDialog.Builder(mContext)
                 .setTitle(getArguments().getString(KEY_TITLE))
                 .setView(createWrapperLayout(editText))

@@ -35,11 +35,20 @@ public class DbHelper {
     public DbHelper() {
     }
 
+    public Project insertProject(Project project) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.copyToRealm(project);
+        realm.commitTransaction();
+        realm.close();
+        return project;
+    }
+
     public Project newProject(String name) {
         Realm realm = Realm.getDefaultInstance();
         Project project = createProjectInstance(realm, name);
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(project);
+        realm.copyToRealm(project);
         realm.commitTransaction();
         realm.close();
         return project;
@@ -87,6 +96,7 @@ public class DbHelper {
     }
 
     public List<Project> projects() {
+        //TODO: sort name ascending
         Realm realm = Realm.getDefaultInstance();
         List<Project> projects = realm.where(Project.class).findAll();
         projects = realm.copyFromRealm(projects);

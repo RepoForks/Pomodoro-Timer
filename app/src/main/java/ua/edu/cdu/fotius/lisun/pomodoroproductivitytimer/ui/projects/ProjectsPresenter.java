@@ -18,16 +18,12 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
 
-import android.util.TimingLogger;
-
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import rx.Subscriber;
 import rx.Subscription;
-import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -50,6 +46,26 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
         RxUtil.unsubscribe(mSubscription);
     }
 
+    public void insertProject(Project project, int adapterPosition) {
+        RxUtil.unsubscribe(mSubscription);
+        mSubscription = mDataManager.insertProject(project).subscribe(new Subscriber<Project>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Project project) {
+                getView().showProject(project, adapterPosition);
+            }
+        });
+    }
+
     public void createProject(String name) {
         RxUtil.unsubscribe(mSubscription);
         mSubscription = mDataManager.createProject(name).subscribe(new Subscriber<Project>() {
@@ -64,12 +80,12 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
 
             @Override
             public void onNext(Project project) {
-                getView().showNewProject(project);
+                getView().showProject(project);
             }
         });
     }
 
-    public void renameProject(long id, String name) {
+    public void renameProject(int adapterPosition, long id, String name) {
         RxUtil.unsubscribe(mSubscription);
         mSubscription = mDataManager.renameProject(id, name).subscribe(new Subscriber<Project>() {
             @Override
@@ -84,12 +100,14 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
 
             @Override
             public void onNext(Project project) {
-                Timber.i("Renamed to: " + project.getName());
+                getView().updateProjectName(adapterPosition, project.getName());
             }
         });
     }
 
-    public void deleteProject(long id) {
+    // TODO: subscription per action
+    // because some action can be performed async
+    public void deleteProject(long id, int adapterPosition) {
         RxUtil.unsubscribe(mSubscription);
         mSubscription = mDataManager.deleteProject(id).subscribe(new Subscriber<Project>() {
             @Override
@@ -104,7 +122,7 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
 
             @Override
             public void onNext(Project project) {
-                Timber.i("Deleted name: " + project.getName());
+                getView().removeProject(adapterPosition);
             }
         });
     }

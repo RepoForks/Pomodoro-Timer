@@ -19,13 +19,11 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data;
 
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.DbHelper;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesHelper;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
@@ -50,6 +48,10 @@ public class DataManager {
 
     public Observable<Preferences> getPreferences() {
         return Observable.fromCallable(() -> mPreferencesHelper.preferences());
+    }
+
+    public Observable<Project> insertProject(Project project) {
+        return Observable.fromCallable(() -> mDbHelper.insertProject(project));
     }
 
     public Observable<Project> createProject(String name) {

@@ -39,7 +39,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -63,15 +62,11 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     RxBus mRxBus;
     @Inject
     ProjectsPresenter mPresenter;
-
     @Bind(R.id.fab_new_project)
     FloatingActionButton mNewProjectFab;
-
     private Context mContext;
-
     private Subscription mDialogSubscription;
     private Subscription mMenuSubscription;
-
 
     @Override
     public void onAttach(Context context) {
@@ -116,16 +111,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     @Override
     public void onStart() {
         super.onStart();
-        mMenuSubscription = mProjectsAdapter.getObserver().subscribe(new Action1<MenuClickResult>() {
-            @Override
-            public void call(MenuClickResult menuClickResult) {
-                if(menuClickResult.getAction() == MenuClickResult.ACTION_RENAME) {
-                    Timber.i("ACTION_RENAME");
-                } else if(menuClickResult.getAction() == MenuClickResult.ACTION_DELETE) {
-                    Timber.i("ACTION_DELETE");
-                }
-            }
-        });
+        mMenuSubscription = subscribeToMenuEvents();
     }
 
     @Override
@@ -143,21 +129,70 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     @Override
     public void showNoProjects() {
         mProjectsAdapter.setProjects(new ArrayList<>());
-        Snackbar.make(mNewProjectFab, R.string.fragment_no_projects_message,
-                Snackbar.LENGTH_SHORT)
-                .show();
+        String message = getString(R.string.snack_msg_no_projects);
+        showSnack(message, null);
     }
 
     @Override
-    public void showNewProject(Project project) {
+    public void showProject(Project project) {
         mProjectsAdapter.addProject(project);
+    }
+
+    @Override
+    public void showProject(Project project, int position) {
+        mProjectsAdapter.insertProject(project, position);
+    }
+
+    @Override
+    public void removeProject(int position) {
+        mProjectsAdapter.deleteProject(position);
+    }
+
+    @Override
+    public void updateProjectName(int adapterPosition, String newName) {
+        mProjectsAdapter.renameProject(adapterPosition, newName);
     }
 
     @OnClick(R.id.fab_new_project)
     public void addProjectClicked() {
+        String title = getString(R.string.dialog_new_project_title);
+        showNameDialog(title, "", result -> mPresenter.createProject(result.getNewName()));
+    }
+
+    private Subscription subscribeToMenuEvents() {
+        return mProjectsAdapter.getObserver().subscribe(result -> {
+            long id = result.getProject().getId();
+            String projectName = result.getProject().getName();
+            int position = result.getAdapterPosition();
+            if (result.getAction() == MenuClickResult.ACTION_RENAME) {
+                String title = getString(R.string.dialog_rename_project_title);
+                showNameDialog(title, projectName, r -> {
+                    String newName = r.getNewName();
+                    mPresenter.renameProject(position, id, r.getNewName());
+                    String msg = getString(R.string.snack_msg_rename, projectName, newName);
+                    showSnack(msg, v -> mPresenter.renameProject(position, id, projectName));
+                });
+            } else if (result.getAction() == MenuClickResult.ACTION_DELETE) {
+                String message = getString(R.string.snack_msg_delete, projectName);
+                mPresenter.deleteProject(id, position);
+                showSnack(message, v -> mPresenter.insertProject(result.getProject(), position));
+            }
+        });
+    }
+
+    private void showSnack(String message, View.OnClickListener action) {
+        Snackbar snack = Snackbar.make(mNewProjectFab, message, Snackbar.LENGTH_LONG);
+        if (action != null) {
+            snack.setAction(R.string.snack_undo, action);
+        }
+        snack.show();
+    }
+
+    private void showNameDialog(String title, String initValue,
+                                Action1<ProjectNameDialogFragment.Result> action) {
         RxUtil.unsubscribe(mDialogSubscription);
         mDialogSubscription = ProjectNameDialogFragment
-                .show(getFragmentManager(), mRxBus, getString(R.string.dialog_new_project_title), "")
-                .subscribe(result -> mPresenter.createProject(result.getNewName()));
+                .show(getFragmentManager(), mRxBus, title, initValue)
+                .subscribe(action);
     }
 }
