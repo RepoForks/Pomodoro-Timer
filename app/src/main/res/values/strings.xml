@@ -19,11 +19,14 @@
     <string name="app_name">PomodoroProductivityTimer</string>
 
     <!--Do not translate-->
-    <string name="work_session_duration_key">work_session_duration</string>
-    <string name="short_break_duration_key">short_break_duration</string>
-    <string name="long_break_duration_key">long_break_duration</string>
-    <string name="long_break_interval_key">long_break_interval</string>
+    <string translatable="false" name="work_session_duration_key">work_session_duration</string>
+    <string translatable="false" name="short_break_duration_key">short_break_duration</string>
+    <string translatable="false" name="long_break_duration_key">long_break_duration</string>
+    <string translatable="false" name="long_break_interval_key">long_break_interval</string>
+    <string translatable="false" name="time">%1$02d:%2$02d</string>
     <!--End of do not translate-->
+
+    <string name="time_init">00:00</string>
 
     <!--Drawer-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -37,9 +40,6 @@
     <string name="pref_category_general">General</string>
     <string name="pref_summary_n_minutes">%1$s minutes</string>
     <string name="pref_summary_n_intervals">%1$s intervals</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="dialog_positive_button">OK</string>
     <string name="dialog_negative_button">CANCEL</string>

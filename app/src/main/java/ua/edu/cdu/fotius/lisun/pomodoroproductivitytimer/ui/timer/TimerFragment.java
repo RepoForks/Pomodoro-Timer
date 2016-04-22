@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
-import rx.functions.Action1;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerTimerFragmentComponent;
@@ -46,10 +46,8 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
 public class TimerFragment extends BaseFragment implements TimerView, ServiceConnection {
     public static String FRAGMENT_TAG = "timer_fragment";
 
-    @Bind(R.id.countdown_minutes)
-    TextView mCountdownMinutes;
-    @Bind(R.id.countdown_seconds)
-    TextView mCountdownSeconds;
+    @Bind(R.id.tv_time)
+    TextView mTimeTv;
 
     private Context mContext;
     private Subscription mSubscription;
@@ -99,19 +97,21 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     }
 
     @OnClick(R.id.fab_start_stop_timer)
-    void startStopTimer() {
-        //TODO: also change fab image here
+    void startStopTimer(View v) {
+        int icon;
         if(mService.isTimerRunning()) {
             mService.stopTimer();
+            icon = R.drawable.ic_start_24dp;
         } else {
             mService.startTimer();
+            icon = R.drawable.ic_stop_24dp;
         }
+        ((FloatingActionButton) v).setImageResource(icon);
     }
 
     @Override
     public void updateTime(Time time) {
-        mCountdownMinutes.setText(time.minutesToString());
-        mCountdownSeconds.setText(time.secondsToString());
+        mTimeTv.setText(getString(R.string.time, time.getMinutes(), time.getSeconds()));
     }
 
     @Override

@@ -34,27 +34,7 @@ public class Time {
         return mMinutes;
     }
 
-    public void setMinutes(long mMinutes) {
-        this.mMinutes = mMinutes;
-    }
-
     public long getSeconds() {
         return mSeconds;
-    }
-
-    public void setSeconds(long mSeconds) {
-        this.mSeconds = mSeconds;
-    }
-
-    public String minutesToString() {
-        return unitToString(mMinutes);
-    }
-
-    public String secondsToString() {
-        return unitToString(mSeconds);
-    }
-
-    private String unitToString(long unitValue) {
-        return String.format("%02d", unitValue);
     }
 }

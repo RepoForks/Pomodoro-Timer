@@ -81,7 +81,6 @@ public class NavigationActivity extends ToolbarActivity implements NavigationVie
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.nav_timer) {
             setFragment(new TimerFragment(), TimerFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_projects) {
