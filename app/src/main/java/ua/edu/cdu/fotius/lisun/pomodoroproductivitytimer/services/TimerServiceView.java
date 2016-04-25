@@ -16,8 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
-public interface DbAttributes {
-    String _ID = "id";
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+
+public interface TimerServiceView extends MvpView {
+    void setPreferences(Preferences preferences);
 }

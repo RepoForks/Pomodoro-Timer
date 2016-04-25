@@ -23,18 +23,18 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-public class TimerTextView extends TextView{
-    public TimerTextView(Context context) {
+public class RobotoTextView extends TextView{
+    public RobotoTextView(Context context) {
         super(context);
         setFontType(context);
     }
 
-    public TimerTextView(Context context, AttributeSet attrs) {
+    public RobotoTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setFontType(context);
     }
 
-    public TimerTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RobotoTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setFontType(context);
     }

@@ -22,5 +22,7 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 
 public interface TimerView extends MvpView{
-    void updateTime(Time time);
+    void showTime(Time time);
+    /*TimerSessionManager.WORK, TimerSessionManager.BREAK, etc.*/
+    void showSessionName(int sessionType);
 }

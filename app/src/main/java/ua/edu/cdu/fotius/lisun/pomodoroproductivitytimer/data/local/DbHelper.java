@@ -25,6 +25,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.realm.Realm;
+import io.realm.RealmQuery;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 
@@ -56,15 +58,15 @@ public class DbHelper {
 
     private Project createProjectInstance(Realm realm, String name) {
         Project project = new Project();
-        project.setId(generateId(realm));
+        project.setId(generateId(realm, Project.class));
         project.setName(name);
         project.setCreationDate(new Date());
         project.setWorkSessionDuration(Preferences.DefaultValues.WORK_SESSION_DURATION);
         return project;
     }
 
-    private long generateId(Realm realm) {
-        Number id = realm.where(Project.class).max("id");
+    private long generateId(Realm realm, Class clazz) {
+        Number id = realm.where(clazz).max(DbAttributes._ID);
         long nextId = (id == null) ? 1 : id.longValue() + 1;
         return nextId;
     }
@@ -72,7 +74,7 @@ public class DbHelper {
     public Project renameProject(long id, String name) {
         Realm realm = Realm.getDefaultInstance();
         Project project = realm.where(Project.class)
-                .equalTo(DbAttributes._ID_PROJECT, id)
+                .equalTo(DbAttributes._ID, id)
                 .findFirst();
         realm.beginTransaction();
         project.setName(name);
@@ -85,7 +87,7 @@ public class DbHelper {
     public Project deleteProject(long id) {
         Realm realm = Realm.getDefaultInstance();
         Project project= realm.where(Project.class)
-                .equalTo(DbAttributes._ID_PROJECT, id)
+                .equalTo(DbAttributes._ID, id)
                 .findFirst();
         Project projectCopy = realm.copyFromRealm(project);
         realm.beginTransaction();
@@ -102,5 +104,29 @@ public class DbHelper {
         projects = realm.copyFromRealm(projects);
         realm.close();
         return projects;
+    }
+
+
+    public FinishedSession saveFinishedSession(long projectId, int workedInMillis) {
+        Realm realm = Realm.getDefaultInstance();
+        //all sessions with unexisted project
+        //ids will be treated as "Unknown" project
+        if(!isProjectExists(realm, projectId))
+            projectId = Project.NO_ID_VALUE;
+        FinishedSession session = new FinishedSession();
+        session.setId(generateId(realm, FinishedSession.class));
+        session.setProjectId(projectId);
+        session.setTimestamp(new Date());
+        session.setWorkedTimeInMinutes(workedInMillis);
+        realm.beginTransaction();
+        realm.copyToRealm(session);
+        realm.commitTransaction();
+        realm.close();
+        return session;
+    }
+
+    private boolean isProjectExists(Realm realm, long projectId) {
+        RealmQuery query = realm.where(Project.class).equalTo(DbAttributes._ID, projectId);
+        return !(query.count() == 0);
     }
 }

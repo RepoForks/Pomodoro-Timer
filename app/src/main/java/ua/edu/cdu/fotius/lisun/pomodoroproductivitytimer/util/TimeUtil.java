@@ -16,8 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util;
 
-public interface DbAttributes {
-    String _ID = "id";
+import java.util.concurrent.TimeUnit;
+
+public class TimeUtil {
+    public static final long toMinutes(long millis) {
+        return TimeUnit.MILLISECONDS.toMinutes(millis);
+    }
+
+    public static final long toSeconds(long millis) {
+        return TimeUnit.MILLISECONDS.toSeconds(millis) -
+                TimeUnit.MINUTES.toSeconds(millis);
+    }
+
+    public static final long toMillis(int minutes) {
+        return TimeUnit.MINUTES.toMillis(minutes);
+    }
 }

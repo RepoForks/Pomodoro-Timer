@@ -16,8 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
-public interface DbAttributes {
-    String _ID = "id";
+public class TimerState {
+    public static final int STATE_READY = 0;
+    public static final int STATE_STARTED = 1;
+    public static final int STATE_STOPPED = 2;
+
+    private int mState;
+    private int mDurationInMinutes;
+    private int mSession;
+
+    public TimerState(int state, int durationInMinutes, int session) {
+        mState = state;
+        mDurationInMinutes = durationInMinutes;
+        mSession = session;
+    }
+
+    public int getState() {
+        return mState;
+    }
+
+    public long getDuration() {
+        return mDurationInMinutes;
+    }
+
+    public int getSession() {
+        return mSession;
+    }
 }

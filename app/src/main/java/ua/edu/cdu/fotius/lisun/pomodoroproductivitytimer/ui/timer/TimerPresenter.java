@@ -18,8 +18,10 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
 
+import java.util.HashMap;
+
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
 
 public class TimerPresenter extends MvpPresenter<TimerView> {
-    //TODO: timer presenter specific methods
+
 }

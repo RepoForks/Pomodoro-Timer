@@ -24,17 +24,27 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.util.Timer;
+
 import javax.inject.Inject;
 
 import rx.Observable;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
 
-public class TimerService extends Service {
-
+/* Considering that services is MVP views. Therefore we can separate Android specific code from
+*  pure java in Presenter*/
+public class TimerService extends Service implements TimerServiceView {
     public class Binder extends android.os.Binder {
-        public Observable<Time> getObservable() {
-            return mEventBus.getObservable(Time.class);
+        public Observable<Time> getTimeUpdateEvents() {
+            return mRxBus.getObservable(Time.class);
+        }
+
+        public Observable<TimerState> getStateUpdateEvents() {
+            return mRxBus.getObservable(TimerState.class);
         }
 
         public TimerService getService() {
@@ -42,22 +52,34 @@ public class TimerService extends Service {
         }
     }
 
-    //TODO: Time is hardcoded now. In future will depend on chosen project
-    private final int TOTAL_TIME = 25000;
     private final int SINGLE_ITERATION_TIME = 10;
 
-    private android.os.Binder mBinder;
-
     @Inject
-    RxBus mEventBus;
+    RxBus mRxBus;
+    @Inject
+    TimerServicePresenter mPresenter;
+
+    private android.os.Binder mBinder;
     private CountDownTimer mTimer;
     private boolean mIsTimerRunning;
+    private long mCurrentProject = Project.NO_ID_VALUE;
+    private TimerSessionManager mSessionManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        PomodoroProductivityTimerApplication.get(this).getApplicationComponent().inject(this);
+        PomodoroProductivityTimerApplication.get(this)
+                .getApplicationComponent().inject(this);
         mBinder = new Binder();
+        mPresenter.attach(this);
+        mPresenter.loadPreferences();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopTimer();
+        mPresenter.detach();
     }
 
     @Nullable
@@ -66,8 +88,15 @@ public class TimerService extends Service {
         return mBinder;
     }
 
+    @Override
+    public void setPreferences(Preferences preferences) {
+        mSessionManager = new TimerSessionManager(preferences);
+    }
+
     public void startTimer() {
-        mTimer = new CountDownTimer(TOTAL_TIME, SINGLE_ITERATION_TIME) {
+        //mTimer = new CountDownTimer(TimeUnit.MINUTES.toMillis(mSessionManager.getDuration()), SINGLE_ITERATION_TIME) {
+        //TODO: only debug
+        mTimer = new CountDownTimer(4000, SINGLE_ITERATION_TIME) {
             @Override
             public void onTick(long millisUntilFinished) {
                 postTime(millisUntilFinished);
@@ -76,13 +105,41 @@ public class TimerService extends Service {
             @Override
             public void onFinish() {
                 dropTimer();
+                if(mSessionManager.getSession() == TimerSessionManager.WORK) {
+                    mPresenter.saveFinishedSession(mCurrentProject, mSessionManager.getDuration());
+                }
+                nextSessionAndPost();
             }
         }.start();
         mIsTimerRunning = true;
+        postState(TimerState.STATE_STARTED);
+    }
+
+    public TimerState getInitState() {
+        return getStateInstance(TimerState.STATE_READY);
+    }
+
+    public void nextSession() {
+        nextSessionAndPost();
+    }
+
+    private void nextSessionAndPost() {
+        mSessionManager.nextSession();
+        postState(TimerState.STATE_READY);
     }
 
     private void postTime(long millis) {
-        mEventBus.send(new Time(millis));
+        mRxBus.send(new Time(millis));
+    }
+
+    private void postState(int state) {
+        TimerState event = getStateInstance(state);
+        mRxBus.send(event);
+    }
+
+    private TimerState getStateInstance(int state) {
+        return new TimerState(state,
+                mSessionManager.getDuration(), mSessionManager.getSession());
     }
 
     private void dropTimer() {
@@ -96,21 +153,14 @@ public class TimerService extends Service {
             mTimer.cancel();
             dropTimer();
         }
+        postState(TimerState.STATE_STOPPED);
     }
 
     public boolean isTimerRunning() {
         return mIsTimerRunning;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopTimer();
+    public void setProject(long id) {
+        mCurrentProject = id;
     }
-
-    //TODO:
-    // setProject
-    // setTime - time for this particular project
-    // reset(?)
-    // persistData(?)
 }

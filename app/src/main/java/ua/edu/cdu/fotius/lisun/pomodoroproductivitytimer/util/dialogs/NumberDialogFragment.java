@@ -49,7 +49,7 @@ public class NumberDialogFragment extends DialogFragment{
         args.putString(KEY_TITLE, title);
         NumberDialogFragment fragment = new NumberDialogFragment();
         fragment.setArguments(args);
-        fragment.show(fragmentManager, Result.class.getName());
+        fragment.show(fragmentManager, NumberDialogFragment.class.getName());
         return rxBus.getObservable(Result.class);
     }
 
@@ -82,10 +82,12 @@ public class NumberDialogFragment extends DialogFragment{
         return new AlertDialog.Builder(mContext)
                 .setTitle(getArguments().getString(KEY_TITLE))
                 .setView(createWrapperLayout(numberPicker))
-                .setPositiveButton(mContext.getString(R.string.dialog_positive_button), (dialog, which) ->
-                    mRxBus.send(new Result(numberPicker.getValue())))
+                .setPositiveButton(mContext.getString(R.string.dialog_positive_button), (dialog, which) -> {
+                    mRxBus.send(new Result(numberPicker.getValue()));
+                    NumberDialogFragment.this.dismiss();
+                })
                 .setNegativeButton(mContext.getString(R.string.dialog_negative_button),
-                        (dialog, which) -> dialog.dismiss())
+                        (dialog, which) -> NumberDialogFragment.this.dismiss())
                 .create();
 
     }

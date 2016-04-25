@@ -52,5 +52,12 @@
     <string name="snack_msg_rename">Project \"%1$s\" renamed to \"%2$s\"</string>
     <string name="snack_msg_no_projects">You have no projects</string>
     <string name="snack_undo">UNDO</string>
+    <string name="timer_fragment_session_work">Work</string>
+    <string name="timer_fragment_break">Break</string>
+    <string name="timer_fragment_long_break">Long break</string>
+    <string name="break_dialog_title">Break time</string>
+    <string name="break_dialog_message">Take a break?</string>
+    <string name="break_dialog_take">Take</string>
+    <string name="break_dialog_skip">Skip</string>
 
 </resources>

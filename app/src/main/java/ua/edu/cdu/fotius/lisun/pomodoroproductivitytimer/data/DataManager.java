@@ -19,6 +19,7 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data;
 
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,6 +27,7 @@ import javax.inject.Singleton;
 import rx.Observable;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.DbHelper;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesHelper;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -68,5 +70,9 @@ public class DataManager {
 
     public Observable<List<Project>> getProjects() {
         return Observable.fromCallable(() -> mDbHelper.projects());
+    }
+
+    public Observable<FinishedSession> saveFinishedSession(long projectId, int workedInMinutes) {
+        return Observable.fromCallable(() -> mDbHelper.saveFinishedSession(projectId, workedInMinutes));
     }
 }
