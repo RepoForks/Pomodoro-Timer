@@ -24,33 +24,72 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
+
         <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/time_init"
-            android:textSize="@dimen/timer_font_size"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true" />
+            android:text="@string/time_init"
+            android:textSize="@dimen/timer_font_size"/>
 
         <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
             android:id="@+id/tv_session"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@android:style/TextAppearance.Medium"
-            android:textColor="@color/colorSecondaryText"
+            android:layout_below="@id/tv_time"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/tv_time" />
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textColor="@color/colorSecondaryText"/>
+
+        <!--This view is not redundant. Needed to fill free space-->
+        <LinearLayout
+            android:id="@+id/ll_info_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/fab_start_stop_timer"
+            android:layout_below="@+id/tv_session"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <Spinner
+                android:id="@+id/sp_projects"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+                    android:id="@+id/tv_worked_today"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sessions_completed_today"
+                    android:layout_toLeftOf="@+id/tv_worked_today_counter"
+                    android:layout_alignParentLeft="true"
+                    android:textAppearance="@android:style/TextAppearance.Large" />
+
+                <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+                    android:id="@+id/tv_worked_today_counter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:textAppearance="@android:style/TextAppearance.Large" />
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_start_stop_timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_start_24dp"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_start_24dp"/>
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

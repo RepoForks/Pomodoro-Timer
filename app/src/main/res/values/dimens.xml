@@ -29,4 +29,10 @@
     <dimen name="margin_small">8dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="cardview_elevation">8dp</dimen>
+
+    <dimen name="spinner_item_padding_left">16dp</dimen>
+    <dimen name="spinner_item_padding_right">16dp</dimen>
+    <dimen name="spinner_item_padding_bottom">20dp</dimen>
+    <dimen name="spinner_item_height">48dp</dimen>
+
 </resources>

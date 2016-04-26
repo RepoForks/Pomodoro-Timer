@@ -28,7 +28,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -40,27 +44,42 @@ import rx.functions.Action1;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerTimerFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerState;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerSessionManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.ProjectsPresenter;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.adapter.*;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.TwoButtonsDialogFragment;
 
+import static butterknife.ButterKnife.findById;
+
 
 public class TimerFragment extends BaseFragment implements TimerView, ServiceConnection {
+
     public static String FRAGMENT_TAG = "timer_fragment";
+
     @Inject
     RxBus mRxBus;
+    @Inject
+    ProjectsAdapter mProjectsAdapter;
+    @Inject
+    TimerPresenter mPresenter;
+
     @Bind(R.id.tv_time)
     TextView mTimeTv;
     @Bind(R.id.fab_start_stop_timer)
     FloatingActionButton mStartStopFab;
     @Bind(R.id.tv_session)
     TextView mSessionNameTv;
+    @Bind(R.id.tv_worked_today_counter)
+    TextView mWorkedTodayTv;
+
     private Context mContext;
     private Subscription mTimeUpdateSubscription;
     private Subscription mStateUpdateSubscription;
@@ -80,6 +99,14 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
                 .applicationComponent(PomodoroProductivityTimerApplication.get(mContext)
                         .getApplicationComponent())
                 .build().inject(this);
+        mPresenter.attach(this);
+        mPresenter.loadProjects();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.detach();
     }
 
     @Override
@@ -87,6 +114,9 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_timer, container, false);
         ButterKnife.bind(this, v);
+        Spinner spinner = findById(v, R.id.sp_projects);
+        spinner.setAdapter(mProjectsAdapter);
+        mPresenter.loadTodaysTotal();
         return v;
     }
 
@@ -188,5 +218,15 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
           } else if(sessionType == TimerSessionManager.LONG_BREAK) {
               mSessionNameTv.setText(R.string.timer_fragment_long_break);
           }
+    }
+
+    @Override
+    public void showProjects(List<Project> projects) {
+        mProjectsAdapter.setProjects(projects);
+    }
+
+    @Override
+    public void showTodaysTotal(int completed) {
+        mWorkedTodayTv.setText(Integer.toString(completed));
     }
 }

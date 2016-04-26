@@ -59,5 +59,7 @@
     <string name="break_dialog_message">Take a break?</string>
     <string name="break_dialog_take">Take</string>
     <string name="break_dialog_skip">Skip</string>
+    <string name="sessions_completed_today">Sessions completed today</string>
+    <string name="unknown_project_name">No project/Unknown</string>
 
 </resources>

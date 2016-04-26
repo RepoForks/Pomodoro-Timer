@@ -62,12 +62,4 @@ public class Project extends RealmObject {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-
-    public long getWorkSessionDuration() {
-        return workSessionDuration;
-    }
-
-    public void setWorkSessionDuration(long workSessionDuration) {
-        this.workSessionDuration = workSessionDuration;
-    }
 }

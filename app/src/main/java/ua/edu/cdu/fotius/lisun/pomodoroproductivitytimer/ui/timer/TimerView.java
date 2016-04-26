@@ -18,6 +18,9 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
 
+import java.util.List;
+
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 
@@ -25,4 +28,6 @@ public interface TimerView extends MvpView{
     void showTime(Time time);
     /*TimerSessionManager.WORK, TimerSessionManager.BREAK, etc.*/
     void showSessionName(int sessionType);
+    void showProjects(List<Project> projects);
+    void showTodaysTotal(int completed);
 }

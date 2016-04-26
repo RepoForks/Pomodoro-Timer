@@ -18,6 +18,7 @@
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -74,5 +75,9 @@ public class DataManager {
 
     public Observable<FinishedSession> saveFinishedSession(long projectId, int workedInMinutes) {
         return Observable.fromCallable(() -> mDbHelper.saveFinishedSession(projectId, workedInMinutes));
+    }
+
+    public Observable<List<FinishedSession>> getCompletedSessions(Date from, Date to) {
+        return Observable.fromCallable(() -> mDbHelper.completedSessions(from, to));
     }
 }

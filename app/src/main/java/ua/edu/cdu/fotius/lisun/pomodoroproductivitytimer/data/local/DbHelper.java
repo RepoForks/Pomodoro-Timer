@@ -26,6 +26,8 @@ import javax.inject.Singleton;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -61,7 +63,6 @@ public class DbHelper {
         project.setId(generateId(realm, Project.class));
         project.setName(name);
         project.setCreationDate(new Date());
-        project.setWorkSessionDuration(Preferences.DefaultValues.WORK_SESSION_DURATION);
         return project;
     }
 
@@ -86,7 +87,7 @@ public class DbHelper {
 
     public Project deleteProject(long id) {
         Realm realm = Realm.getDefaultInstance();
-        Project project= realm.where(Project.class)
+        Project project = realm.where(Project.class)
                 .equalTo(DbAttributes._ID, id)
                 .findFirst();
         Project projectCopy = realm.copyFromRealm(project);
@@ -111,7 +112,7 @@ public class DbHelper {
         Realm realm = Realm.getDefaultInstance();
         //all sessions with unexisted project
         //ids will be treated as "Unknown" project
-        if(!isProjectExists(realm, projectId))
+        if (!isProjectExists(realm, projectId))
             projectId = Project.NO_ID_VALUE;
         FinishedSession session = new FinishedSession();
         session.setId(generateId(realm, FinishedSession.class));
@@ -128,5 +129,15 @@ public class DbHelper {
     private boolean isProjectExists(Realm realm, long projectId) {
         RealmQuery query = realm.where(Project.class).equalTo(DbAttributes._ID, projectId);
         return !(query.count() == 0);
+    }
+
+    public List<FinishedSession> completedSessions(Date from, Date to) {
+        Realm realm = Realm.getDefaultInstance();
+        List<FinishedSession> sessions = realm.where(FinishedSession.class)
+                .between(DbAttributes._SESSION_TIMESTAMP, from, to)
+                .findAll();
+        sessions = realm.copyFromRealm(sessions);
+        realm.close();
+        return sessions;
     }
 }

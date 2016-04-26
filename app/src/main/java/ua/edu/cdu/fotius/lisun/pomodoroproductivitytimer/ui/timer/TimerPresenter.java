@@ -18,10 +18,71 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
 
-import java.util.HashMap;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
+import javax.inject.Inject;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.ShortenSubscriber;
 
 public class TimerPresenter extends MvpPresenter<TimerView> {
+    private final DataManager mDataManager;
+    private Subscription mProjectsSubscription;
+    private Subscription mTotalsSubscription;
 
+    @Inject
+    public TimerPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        RxUtil.unsubscribe(mProjectsSubscription);
+        RxUtil.unsubscribe(mTotalsSubscription);
+    }
+
+    public void loadProjects() {
+        mProjectsSubscription = mDataManager.getProjects()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<List<Project>>() {
+                    @Override
+                    public void onNext(List<Project> projects) {
+                        Project unknown = new Project();
+                        unknown.setId(Project.NO_ID_VALUE);
+                        unknown.setName(null);
+                        projects.add(0, unknown);
+                        getView().showProjects(projects);
+                    }
+                });
+    }
+
+    public void loadTodaysTotal() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date today = calendar.getTime();
+        Date now = new Date();
+        mTotalsSubscription = mDataManager.getCompletedSessions(today, now)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(List::size)
+                .subscribe(new ShortenSubscriber<Integer>() {
+                    @Override
+                    public void onNext(Integer integer) {
+                        getView().showTodaysTotal(integer);
+                    }
+                });
+    }
 }

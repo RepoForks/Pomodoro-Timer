@@ -16,9 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util;
 
-public interface DbAttributes {
-    String _ID = "id";
-    String _SESSION_TIMESTAMP = "timestamp";
+import rx.Subscriber;
+import timber.log.Timber;
+
+public abstract class ShortenSubscriber<T> extends Subscriber<T> {
+
+    @Override
+    public void onCompleted() {
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        Timber.e(e, "");
+    }
 }
