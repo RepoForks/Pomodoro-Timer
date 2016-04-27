@@ -19,7 +19,6 @@
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
 
 import android.os.Bundle;
-import android.view.View;
 
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.ToolbarActivity;

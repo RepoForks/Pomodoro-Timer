@@ -21,7 +21,6 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
 import java.util.Date;
 
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class FinishedSession extends RealmObject{

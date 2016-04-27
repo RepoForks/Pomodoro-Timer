@@ -22,7 +22,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -33,8 +32,6 @@ import javax.inject.Inject;
 
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
-
-import static butterknife.ButterKnife.findById;
 
 public class ProjectsAdapter extends BaseAdapter {
     List<Project> mProjects;

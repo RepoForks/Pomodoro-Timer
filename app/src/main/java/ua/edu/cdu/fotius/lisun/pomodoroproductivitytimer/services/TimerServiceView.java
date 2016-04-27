@@ -18,7 +18,6 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 

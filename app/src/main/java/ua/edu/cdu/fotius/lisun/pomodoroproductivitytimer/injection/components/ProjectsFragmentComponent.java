@@ -19,10 +19,8 @@
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components;
 
 import dagger.Component;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.scopes.PerFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.ProjectsFragment;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings.SettingsFragment;
 
 @PerFragment
 @Component(dependencies = ApplicationComponent.class)

@@ -18,9 +18,6 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
-import android.util.TimingLogger;
-
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 
 public class TimerSessionManager {

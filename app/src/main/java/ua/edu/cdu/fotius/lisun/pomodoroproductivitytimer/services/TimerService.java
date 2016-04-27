@@ -24,12 +24,9 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import java.util.Timer;
-
 import javax.inject.Inject;
 
 import rx.Observable;
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;

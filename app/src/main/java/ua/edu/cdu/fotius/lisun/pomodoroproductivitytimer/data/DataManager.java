@@ -20,7 +20,6 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

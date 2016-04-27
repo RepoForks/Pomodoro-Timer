@@ -18,24 +18,23 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
 
-import java.util.concurrent.Callable;
-
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
-import rx.functions.Action1;
-import timber.log.Timber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.ShortenSubscriber;
 
 public class SettingsPresenter extends MvpPresenter<SettingsView> {
 
     private final DataManager mDataManager;
-    private Subscription mSubscription;
+    private Subscription mSaveSubscription;
+    private Subscription mLoadSubscription;
 
     @Inject
     public SettingsPresenter(DataManager dataManager) {
@@ -45,47 +44,29 @@ public class SettingsPresenter extends MvpPresenter<SettingsView> {
     @Override
     public void detach() {
         super.detach();
-        unsubscribe();
-    }
-
-    private void unsubscribe() {
-        if((mSubscription != null) && (!mSubscription.isUnsubscribed())) {
-            mSubscription.unsubscribe();
-        }
+        RxUtil.unsubscribe(mSaveSubscription);
+        RxUtil.unsubscribe(mLoadSubscription);
     }
 
     public void savePreference(PreferencePair preferencePair) {
-        unsubscribe();
-        mSubscription = mDataManager.savePreference(preferencePair).subscribe(new Subscriber<PreferencePair>() {
-            @Override
-            public void onCompleted() {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Timber.e(e, "");
-            }
-
-            @Override
-            public void onNext(PreferencePair preferencePair) {
-                getView().setPreferenceSummary(preferencePair.getKey(), preferencePair.getValue());
-            }
-        });
+        RxUtil.unsubscribe(mSaveSubscription);
+        mSaveSubscription = mDataManager.savePreference(preferencePair)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<PreferencePair>() {
+                    @Override
+                    public void onNext(PreferencePair preferencePair) {
+                        getView().setPreferenceSummary(preferencePair.getKey(), preferencePair.getValue());
+                    }
+                });
     }
 
     public void loadPreferences() {
-        unsubscribe();
-        mSubscription = mDataManager.getPreferences()
-                .subscribe(new Subscriber<Preferences>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "");
-                    }
-
+        RxUtil.unsubscribe(mLoadSubscription);
+        mLoadSubscription = mDataManager.getPreferences()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<Preferences>() {
                     @Override
                     public void onNext(Preferences preferences) {
                         getView().setPreferencesSummary(preferences);

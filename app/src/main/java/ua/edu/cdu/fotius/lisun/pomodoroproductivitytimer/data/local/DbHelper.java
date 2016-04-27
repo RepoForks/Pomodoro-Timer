@@ -26,10 +26,7 @@ import javax.inject.Singleton;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import io.realm.RealmResults;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 
 @Singleton

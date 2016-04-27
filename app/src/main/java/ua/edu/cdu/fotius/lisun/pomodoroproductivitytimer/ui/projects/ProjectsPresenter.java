@@ -22,18 +22,23 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Subscriber;
 import rx.Subscription;
-import timber.log.Timber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.ShortenSubscriber;
 
 public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
 
     private final DataManager mDataManager;
-    private Subscription mSubscription;
+    private Subscription mInsertSubscription;
+    private Subscription mCreateSubscription;
+    private Subscription mRenameSubscription;
+    private Subscription mDeleteSubscription;
+    private Subscription mProjectSubscription;
 
     @Inject
     public ProjectsPresenter(DataManager dataManager) {
@@ -43,110 +48,79 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
     @Override
     public void detach() {
         super.detach();
-        RxUtil.unsubscribe(mSubscription);
+        RxUtil.unsubscribe(mInsertSubscription);
+        RxUtil.unsubscribe(mCreateSubscription);
+        RxUtil.unsubscribe(mRenameSubscription);
+        RxUtil.unsubscribe(mDeleteSubscription);
+        RxUtil.unsubscribe(mProjectSubscription);
     }
 
     public void insertProject(Project project, int adapterPosition) {
-        RxUtil.unsubscribe(mSubscription);
-        mSubscription = mDataManager.insertProject(project).subscribe(new Subscriber<Project>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(Project project) {
-                getView().showProject(project, adapterPosition);
-            }
-        });
+        RxUtil.unsubscribe(mInsertSubscription);
+        mInsertSubscription = mDataManager.insertProject(project)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<Project>() {
+                    @Override
+                    public void onNext(Project project) {
+                        getView().showProject(project, adapterPosition);
+                    }
+                });
     }
 
     public void createProject(String name) {
-        RxUtil.unsubscribe(mSubscription);
-        mSubscription = mDataManager.createProject(name).subscribe(new Subscriber<Project>() {
-            @Override
-            public void onCompleted() {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Timber.e(e, "");
-            }
-
-            @Override
-            public void onNext(Project project) {
-                getView().showProject(project);
-            }
-        });
+        RxUtil.unsubscribe(mCreateSubscription);
+        mCreateSubscription = mDataManager.createProject(name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<Project>() {
+                    @Override
+                    public void onNext(Project project) {
+                        getView().showProject(project);
+                    }
+                });
     }
 
     public void renameProject(int adapterPosition, long id, String name) {
-        RxUtil.unsubscribe(mSubscription);
-        mSubscription = mDataManager.renameProject(id, name).subscribe(new Subscriber<Project>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(Project project) {
-                getView().updateProjectName(adapterPosition, project.getName());
-            }
-        });
+        RxUtil.unsubscribe(mRenameSubscription);
+        mRenameSubscription = mDataManager.renameProject(id, name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<Project>() {
+                    @Override
+                    public void onNext(Project project) {
+                        getView().updateProjectName(adapterPosition, project.getName());
+                    }
+                });
     }
 
-    // TODO: subscription per action
-    // because some action can be performed async
     public void deleteProject(long id, int adapterPosition) {
-        RxUtil.unsubscribe(mSubscription);
-        mSubscription = mDataManager.deleteProject(id).subscribe(new Subscriber<Project>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(Project project) {
-                getView().removeProject(adapterPosition);
-            }
-        });
+        RxUtil.unsubscribe(mDeleteSubscription);
+        mDeleteSubscription = mDataManager.deleteProject(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<Project>() {
+                    @Override
+                    public void onNext(Project project) {
+                        getView().removeProject(adapterPosition);
+                    }
+                });
     }
 
     public void getProjects() {
-        RxUtil.unsubscribe(mSubscription);
-        mSubscription = mDataManager.getProjects().subscribe(new Subscriber<List<Project>>() {
-            @Override
-            public void onCompleted() {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Timber.e(e, "");
-            }
-
-            @Override
-            public void onNext(List<Project> projects) {
-                if(projects.isEmpty()) {
-                    getView().showNoProjects();
-                } else {
-                    getView().showProjects(projects);
-                }
-            }
-        });
+        RxUtil.unsubscribe(mProjectSubscription);
+        mProjectSubscription = mDataManager.getProjects()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<List<Project>>() {
+                    @Override
+                    public void onNext(List<Project> projects) {
+                        if (projects.isEmpty()) {
+                            getView().showNoProjects();
+                        } else {
+                            getView().showProjects(projects);
+                        }
+                    }
+                });
     }
 }

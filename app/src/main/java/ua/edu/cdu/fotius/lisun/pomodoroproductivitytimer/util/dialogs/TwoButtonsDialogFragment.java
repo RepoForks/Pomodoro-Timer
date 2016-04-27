@@ -20,7 +20,6 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

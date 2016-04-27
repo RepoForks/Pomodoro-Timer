@@ -51,6 +51,7 @@ public class TimerPresenter extends MvpPresenter<TimerView> {
     }
 
     public void loadProjects() {
+        RxUtil.unsubscribe(mProjectsSubscription);
         mProjectsSubscription = mDataManager.getProjects()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -74,6 +75,7 @@ public class TimerPresenter extends MvpPresenter<TimerView> {
         calendar.set(Calendar.MILLISECOND, 0);
         Date today = calendar.getTime();
         Date now = new Date();
+        RxUtil.unsubscribe(mTotalsSubscription);
         mTotalsSubscription = mDataManager.getCompletedSessions(today, now)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

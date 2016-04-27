@@ -25,7 +25,6 @@ import android.content.SharedPreferences;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 
