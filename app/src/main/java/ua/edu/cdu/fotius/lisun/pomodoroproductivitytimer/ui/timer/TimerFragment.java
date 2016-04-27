@@ -28,6 +28,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,7 +39,9 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import rx.Subscription;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -223,5 +226,12 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     @Override
     public void showTodaysTotal(int completed) {
         mWorkedTodayTv.setText(Integer.toString(completed));
+    }
+
+    @OnItemSelected(R.id.sp_projects)
+    public void spinnerItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Timber.i("Spinner item selected. Position: %d; ID: %d;", position, id);
+        Project project = mProjectsAdapter.getProject(position);
+        mService.setProject(project.getId());
     }
 }

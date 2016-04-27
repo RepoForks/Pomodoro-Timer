@@ -27,6 +27,7 @@ import android.support.annotation.Nullable;
 import javax.inject.Inject;
 
 import rx.Observable;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -103,6 +104,7 @@ public class TimerService extends Service implements TimerServiceView {
             public void onFinish() {
                 dropTimer();
                 if(mSessionManager.getSession() == TimerSessionManager.WORK) {
+                    Timber.i("Project id: %d; Duration: %d", mCurrentProject, mSessionManager.getDuration());
                     mPresenter.saveFinishedSession(mCurrentProject, mSessionManager.getDuration());
                 }
                 nextSessionAndPost();

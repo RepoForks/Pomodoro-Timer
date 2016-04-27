@@ -39,7 +39,10 @@ public class ProjectsAdapter extends BaseAdapter {
     @Inject
     public ProjectsAdapter() {
         mProjects = new ArrayList<>();
+    }
 
+    public Project getProject(int position) {
+        return mProjects.get(position);
     }
 
     @Override
