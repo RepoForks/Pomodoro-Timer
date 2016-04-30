@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers;
 
 public class Preferences {
 

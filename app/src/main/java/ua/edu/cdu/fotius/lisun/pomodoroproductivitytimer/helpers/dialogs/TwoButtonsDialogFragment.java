@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -31,7 +31,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 
 public class TwoButtonsDialogFragment extends DialogFragment{
 

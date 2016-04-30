@@ -20,11 +20,7 @@
 <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_project"
-    android:singleLine="true"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/spinner_item_height"
-    android:paddingLeft="@dimen/spinner_item_padding_left"
-    android:paddingRight="@dimen/spinner_item_padding_right"
-    android:paddingBottom="@dimen/spinner_item_padding_bottom"
-    android:textAppearance="@android:style/TextAppearance.Large"/>
+    android:textAppearance="@android:style/TextAppearance.Large"
+    style="@style/SpinnerDropDownItemStyle"/>
 

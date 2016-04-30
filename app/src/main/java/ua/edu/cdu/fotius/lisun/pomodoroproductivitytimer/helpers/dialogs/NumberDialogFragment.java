@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -28,35 +28,36 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.NumberPicker;
 
 import javax.inject.Inject;
 
 import rx.Observable;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 
-public class ProjectNameDialogFragment extends DialogFragment {
+public class NumberDialogFragment extends DialogFragment{
 
-    public static Observable<Result> show(FragmentManager fragmentManager, RxBus rxBus,
-                                          String title, String initValue) {
+    public static Observable<Result> show(FragmentManager fragmentManager,
+                                                            RxBus rxBus, String title, int initValue) {
         Bundle args = new Bundle();
-        args.putString(KEY_INIT_VALUE, initValue);
+        args.putInt(KEY_INIT_VALUE, initValue);
         args.putString(KEY_TITLE, title);
-        ProjectNameDialogFragment fragment = new ProjectNameDialogFragment();
+        NumberDialogFragment fragment = new NumberDialogFragment();
         fragment.setArguments(args);
-        fragment.show(fragmentManager, ProjectNameDialogFragment.class.getName());
+        fragment.show(fragmentManager, NumberDialogFragment.class.getName());
         return rxBus.getObservable(Result.class);
     }
 
     private static final String KEY_INIT_VALUE = "init_value";
     private static final String KEY_TITLE = "title";
+    private static final int NUMBER_PICKER_DEFAULT_MAX = 99;
+    private static final int NUMBER_PICKER_DEFAULT_MIN = 2;
 
     @Inject
     RxBus mRxBus;
-
     private Context mContext;
 
     @Override
@@ -75,43 +76,46 @@ public class ProjectNameDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        EditText editText = new EditText(mContext);
-        String initText = getArguments().getString(KEY_INIT_VALUE, "");
-        editText.setText(initText);
-        editText.setSelection(initText.length());
+        NumberPicker numberPicker = createNumberPicker();
         return new AlertDialog.Builder(mContext)
                 .setTitle(getArguments().getString(KEY_TITLE))
-                .setView(createWrapperLayout(editText))
+                .setView(createWrapperLayout(numberPicker))
                 .setPositiveButton(mContext.getString(R.string.dialog_positive_button), (dialog, which) -> {
-                    mRxBus.send(new Result(editText.getText().toString()));
-                    ProjectNameDialogFragment.this.dismiss();
+                    mRxBus.send(new Result(numberPicker.getValue()));
+                    NumberDialogFragment.this.dismiss();
                 })
                 .setNegativeButton(mContext.getString(R.string.dialog_negative_button),
-                        (dialog, which) -> {
-                            ProjectNameDialogFragment.this.dismiss();
-                        })
+                        (dialog, which) -> NumberDialogFragment.this.dismiss())
                 .create();
 
     }
 
-    private FrameLayout createWrapperLayout(EditText editText) {
+    private NumberPicker createNumberPicker() {
+        NumberPicker numberPicker = new NumberPicker(mContext);
+        numberPicker.setMaxValue(NUMBER_PICKER_DEFAULT_MAX);
+        numberPicker.setMinValue(NUMBER_PICKER_DEFAULT_MIN);
+        numberPicker.setWrapSelectorWheel(false);
+        return numberPicker;
+    }
+
+    private FrameLayout createWrapperLayout(NumberPicker numberPicker) {
         FrameLayout.LayoutParams params = new FrameLayout
-                .LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                .LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
         FrameLayout frameLayout = new FrameLayout(mContext);
-        frameLayout.addView(editText, params);
+        frameLayout.addView(numberPicker, params);
         return frameLayout;
     }
 
     public class Result {
-        private String mNewName;
+        private int mNewNumber;
 
-        public Result(String newName) {
-            mNewName = newName;
+        public Result(int newNumber) {
+            mNewNumber = newNumber;
         }
 
-        public String getNewName() {
-            return mNewName;
+        public int getNewNumber() {
+            return mNewNumber;
         }
     }
 }

@@ -16,32 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers;
 
-public class PreferencePair {
-    private String mKey;
-    private String mValue;
+import rx.Subscriber;
+import timber.log.Timber;
 
-    public PreferencePair(String key, String value) {
-        mKey = key;
-        mValue = value;
+public abstract class ShortenSubscriber<T> extends Subscriber<T> {
+
+    @Override
+    public void onCompleted() {
     }
 
-    public String getKey() {
-        return mKey;
-    }
-
-    public PreferencePair setKey(String key) {
-        mKey = key;
-        return this;
-    }
-
-    public String getValue() {
-        return mValue;
-    }
-
-    public PreferencePair setValue(String value) {
-        mValue = value;
-        return this;
+    @Override
+    public void onError(Throwable e) {
+        Timber.e(e, "");
     }
 }

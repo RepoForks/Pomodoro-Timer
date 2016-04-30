@@ -27,7 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 
-public abstract class ToolbarActivity extends AppCompatActivity{
+public abstract class FragmentActivity extends AppCompatActivity{
 
     public final String CURRENT_FRAGMENT_TAG_KEY = "current_fragment_key";
 

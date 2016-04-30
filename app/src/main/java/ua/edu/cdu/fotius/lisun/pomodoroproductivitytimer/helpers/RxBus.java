@@ -16,19 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers;
 
-import rx.Subscriber;
-import timber.log.Timber;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-public abstract class ShortenSubscriber<T> extends Subscriber<T> {
+import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.SerializedSubject;
+import rx.subjects.Subject;
 
-    @Override
-    public void onCompleted() {
+@Singleton
+public class RxBus {
+    private Subject<Object, Object> mSubject = new SerializedSubject<>(PublishSubject.create());
+
+    @Inject
+    public RxBus() {
     }
 
-    @Override
-    public void onError(Throwable e) {
-        Timber.e(e, "");
+    public void send(Object object) {
+        mSubject.onNext(object);
+    }
+
+    public <T> Observable<T> getObservable(Class<T> clazz)  {
+        return (Observable<T>) mSubject.filter(clazz::isInstance);
     }
 }
