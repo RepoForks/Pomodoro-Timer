@@ -28,9 +28,10 @@ import rx.Observable;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.DbHelper;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesHelper;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.PreferencePair;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ProjectStatistics;
 
 @Singleton
 public class DataManager {
@@ -72,11 +73,15 @@ public class DataManager {
         return Observable.fromCallable(() -> mDbHelper.projects());
     }
 
-    public Observable<FinishedSession> saveFinishedSession(long projectId, int workedInMinutes) {
-        return Observable.fromCallable(() -> mDbHelper.saveFinishedSession(projectId, workedInMinutes));
+    public Observable<FinishedSession> saveFinishedSession(long projectId, long workedInMillis) {
+        return Observable.fromCallable(() -> mDbHelper.saveFinishedSession(projectId, workedInMillis));
     }
 
     public Observable<List<FinishedSession>> getCompletedSessions(Date from, Date to) {
-        return Observable.fromCallable(() -> mDbHelper.completedSessions(from, to));
+        return Observable.fromCallable(() -> mDbHelper.finishedSessions(from, to));
+    }
+
+    public Observable<List<ProjectStatistics>> getStatistics(Date from, Date to) {
+        return Observable.fromCallable(() -> mDbHelper.statistics(from, to));
     }
 }

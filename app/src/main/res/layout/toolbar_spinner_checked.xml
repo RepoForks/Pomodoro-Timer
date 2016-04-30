@@ -16,28 +16,13 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group
-        android:id="@+id/group_1"
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_timer"
-            android:title="@string/drawer_item_timer" />
-        <item
-            android:id="@+id/nav_projects"
-            android:title="@string/drawer_item_projects" />
-    </group>
-
-    <group
-        android:id="@+id/group_2"
-        android:checkableBehavior="none">
-        <item
-            android:id="@+id/nav_statistics"
-            android:title="@string/drawer_item_statistics" />
-        <item
-            android:id="@+id/nav_settings"
-            android:title="@string/drawer_item_settings" />
-    </group>
-
-</menu>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+          android:id="@android:id/text1"
+          style="?attr/spinnerDropDownItemStyle"
+          android:singleLine="true"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          android:textColor="@android:color/white"
+          android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+          android:ellipsize="marquee"/>

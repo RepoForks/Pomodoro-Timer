@@ -25,10 +25,10 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesKeys;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.ApplicationModule;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.NumberDialogFragment;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.ProjectNameDialogFragment;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.TwoButtonsDialogFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.NumberDialogFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.ProjectNameDialogFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.TwoButtonsDialogFragment;
 
 @Singleton
 @Component(modules = ApplicationModule.class)

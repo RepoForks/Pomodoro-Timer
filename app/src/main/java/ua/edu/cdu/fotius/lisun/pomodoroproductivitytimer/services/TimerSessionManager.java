@@ -18,7 +18,7 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 
 public class TimerSessionManager {
     public static final int WORK = 0;

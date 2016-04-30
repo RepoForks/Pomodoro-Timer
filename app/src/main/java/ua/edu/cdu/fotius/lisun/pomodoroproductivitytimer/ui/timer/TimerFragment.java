@@ -28,7 +28,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -51,9 +50,9 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerSessionManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerState;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.TwoButtonsDialogFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.TwoButtonsDialogFragment;
 
 import static butterknife.ButterKnife.findById;
 
@@ -110,11 +109,11 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_timer, container, false);
+        View v = inflater.inflate(R.layout.timer_fragment, container, false);
         ButterKnife.bind(this, v);
         Spinner spinner = findById(v, R.id.sp_projects);
         spinner.setAdapter(mProjectsAdapter);
-        mPresenter.loadTodaysTotal();
+        mPresenter.loadTodayTotal();
         return v;
     }
 
@@ -182,6 +181,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
             showTime(event.getDuration(), 0);
             if ((event.getSession() == TimerSessionManager.BREAK)
                     || (event.getSession() == TimerSessionManager.LONG_BREAK)) {
+                mPresenter.loadTodayTotal();
                 RxUtil.unsubscribe(mDialogSubscription);
                 mDialogSubscription =
                         TwoButtonsDialogFragment.show(getFragmentManager(), mRxBus,
@@ -229,7 +229,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     }
 
     @OnItemSelected(R.id.sp_projects)
-    public void spinnerItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    public void spinnerItemSelected(int position, long id) {
         Timber.i("Spinner item selected. Position: %d; ID: %d;", position, id);
         Project project = mProjectsAdapter.getProject(position);
         mService.setProject(project.getId());

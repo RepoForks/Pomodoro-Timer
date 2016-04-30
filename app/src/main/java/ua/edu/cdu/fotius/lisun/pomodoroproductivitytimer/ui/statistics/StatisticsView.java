@@ -16,15 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.statistics;
 
 import java.util.List;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ProjectStatistics;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 
-public interface ProjectsView extends MvpView {
-    void showProjects(List<Project> projects);
-    void showNoProjects();
-    void showProject(Project project);
+public interface StatisticsView extends MvpView {
+    void showStatistics(List<ProjectStatistics> statistics);
 }

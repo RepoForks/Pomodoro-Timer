@@ -21,15 +21,17 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
 public class FinishedSession extends RealmObject{
 
     @PrimaryKey
     private long id;
+    @Index
     private long projectId;
     private Date timestamp;
-    private int workedTimeInMinutes;
+    private long workedTimeInMillis;
 
     public long getId() {
         return id;
@@ -55,11 +57,11 @@ public class FinishedSession extends RealmObject{
         this.timestamp = timestamp;
     }
 
-    public int getWorkedTimeInMinutes() {
-        return workedTimeInMinutes;
+    public long getWorkedTimeInMillis() {
+        return workedTimeInMillis;
     }
 
-    public void setWorkedTimeInMinutes(int workedTimeInMinutes) {
-        this.workedTimeInMinutes = workedTimeInMinutes;
+    public void setWorkedTimeInMillis(long workedTimeInMillis) {
+        this.workedTimeInMillis = workedTimeInMillis;
     }
 }

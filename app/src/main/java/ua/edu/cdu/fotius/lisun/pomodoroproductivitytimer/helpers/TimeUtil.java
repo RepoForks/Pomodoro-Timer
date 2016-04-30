@@ -18,19 +18,44 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 public class TimeUtil {
-    public static final long toMinutes(long millis) {
-        return TimeUnit.MILLISECONDS.toMinutes(millis);
+
+    public static final long hours(long millis) {
+        return TimeUnit.MILLISECONDS.toHours(millis);
     }
 
-    public static final long toSeconds(long millis) {
-        return TimeUnit.MILLISECONDS.toSeconds(millis) -
-                TimeUnit.MINUTES.toSeconds(millis);
+    public static final long minutes(long hours, long millis) {
+        return TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(hours);
     }
 
-    public static final long toMillis(int minutes) {
-        return TimeUnit.MINUTES.toMillis(minutes);
+    public static Date timestampNow() {
+        return new Date();
+    }
+
+    public static Date timestampMidnight() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    public static Date timestampStartOfWeek() {
+        Calendar calendar = Calendar.getInstance();
+        Timber.i("Now: " + calendar.toString());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        Timber.i("Start of week: " + calendar.toString());
+        return calendar.getTime();
     }
 }

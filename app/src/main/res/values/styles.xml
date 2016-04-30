@@ -41,4 +41,26 @@
         <item name="android:background">@android:color/white</item>
     </style>
 
+    <style name="SpinnerDropDownItemStyle">
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_height">@dimen/spinner_item_height</item>
+        <item name="android:paddingLeft">@dimen/spinner_item_padding_left</item>
+        <item name="android:paddingRight">@dimen/spinner_item_padding_right</item>
+        <item name="android:paddingBottom">@dimen/spinner_item_padding_bottom</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner.DropDown.ActionBar">
+        <item name="overlapAnchor">true</item>
+    </style>
+
+    <style name="StatisticsTextViewStyle" >
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Medium</item>
+    </style>
+
+    <style name="StatisticsCardViewStyle" >
+        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="cardElevation">@dimen/cardview_elevation</item>
+    </style>
 </resources>

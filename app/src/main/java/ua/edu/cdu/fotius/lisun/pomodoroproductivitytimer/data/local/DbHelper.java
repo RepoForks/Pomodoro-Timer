@@ -27,6 +27,8 @@ import javax.inject.Singleton;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -93,16 +95,26 @@ public class DbHelper {
                 .findFirst();
         Project projectCopy = realm.copyFromRealm(project);
         realm.beginTransaction();
+        resetFinishedSession(realm, project.getId());
         project.removeFromRealm();
         realm.commitTransaction();
         realm.close();
         return projectCopy;
     }
 
+    private void resetFinishedSession(Realm realm, long id) {
+        RealmResults<FinishedSession> sessions = realm.where(FinishedSession.class)
+                .equalTo(DbAttributes.SESSION_PROJECT_ID, id)
+                .findAll();
+        for(int i = 0; i < sessions.size(); i++) {
+            sessions.get(i).setProjectId(Project.NO_ID_VALUE);
+        }
+    }
+
     public List<Project> projects() {
-        //TODO: sort name ascending
         Realm realm = Realm.getDefaultInstance();
-        List<Project> projects = realm.where(Project.class).findAll();
+        List<Project> projects = realm.where(Project.class)
+                .findAllSorted(DbAttributes.PROJECT_NAME, Sort.ASCENDING);
         projects = realm.copyFromRealm(projects);
         realm.close();
         return projects;
@@ -112,6 +124,7 @@ public class DbHelper {
         Realm realm = Realm.getDefaultInstance();
         FinishedSession session = new FinishedSession();
         session.setId(generateId(realm, FinishedSession.class));
+        projectId = (project(realm, projectId) == null) ? Project.NO_ID_VALUE : projectId;
         session.setProjectId(projectId);
         session.setTimestamp(new Date());
         session.setWorkedTimeInMillis(workedInMillis);
@@ -121,35 +134,36 @@ public class DbHelper {
         realm.close();
         return session;
     }
-    
+
     public List<ProjectStatistics> statistics(Date from, Date to) {
         Realm realm = Realm.getDefaultInstance();
-        List<FinishedSession> sessions = distinctFinishedSessions(realm, from, to);
-        ProjectStatistics unknown = new ProjectStatistics(Project.NO_ID_VALUE, null);
-        long totalWorked = totalWorked(realm, from, to);
-        long projectId, worked;
-        String projectName;
-        double workPercentage;
         List<ProjectStatistics> statistics = new ArrayList<>();
+        List<FinishedSession> sessions = distinctFinishedSessions(realm, from, to);
+        long totalWorked = totalWorked(realm, from, to);
+        ProjectStatistics unknown = unknownStatistics(realm, from, to, totalWorked);
+        addToStatisticsList(statistics, unknown);
+        long worked;
+        double workPercentage;
         for (FinishedSession session : sessions) {
             Project project = project(realm, session.getProjectId());
-            if(project != null) {
-                projectName = project.getName();
-                projectId = project.getId();
-                worked = totalProjectWorked(realm, from, to, projectId);
+            if((project != null) && (project.getId() != Project.NO_ID_VALUE)) {
+                worked = totalProjectWorked(realm, from, to, project.getId());
                 workPercentage = MathUtil.percentage(totalWorked, worked);
-                addToStatisticsList(statistics, new ProjectStatistics(projectId, projectName,
+                addToStatisticsList(statistics, new ProjectStatistics(project.getId(), project.getName(),
                         workPercentage, worked));
-            } else {
-                worked = totalProjectWorked(realm, from, to, session.getProjectId());
-                workPercentage = MathUtil.percentage(totalWorked, worked);
-                unknown.setWorkedInMillis(unknown.getWorkedInMillis() + worked);
-                unknown.setWorkPercentage(unknown.getWorkPercentage() + workPercentage);
             }
-        }
-        addToStatisticsList(statistics, unknown);
+        };
         realm.close();
         return statistics;
+    }
+
+    private ProjectStatistics unknownStatistics(Realm realm, Date from, Date to, long totalWorked) {
+        long worked = totalProjectWorked(realm, from, to, Project.NO_ID_VALUE);
+        double workPercentage = MathUtil.percentage(totalWorked, worked);
+        ProjectStatistics unknown = new ProjectStatistics(Project.NO_ID_VALUE, null);
+        unknown.setWorkedInMillis(worked);
+        unknown.setWorkPercentage(workPercentage);
+        return unknown;
     }
 
     private long totalWorked(Realm realm, Date from, Date to) {

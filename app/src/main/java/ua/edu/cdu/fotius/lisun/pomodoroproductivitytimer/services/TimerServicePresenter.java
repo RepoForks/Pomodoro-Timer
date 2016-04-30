@@ -20,17 +20,15 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
 import javax.inject.Inject;
 
-import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.ShortenSubscriber;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ShortenSubscriber;
 
 public class TimerServicePresenter extends MvpPresenter<TimerServiceView> {
 
@@ -63,16 +61,17 @@ public class TimerServicePresenter extends MvpPresenter<TimerServiceView> {
                 });
     }
 
-    public void saveFinishedSession(long projectId, int workedInMinutes) {
+    public void saveFinishedSession(long projectId, long workedInMillis) {
         RxUtil.unsubscribe(mSaveSubscription);
         // Do nothing onNext.
         // Only for handling errors
-        mSaveSubscription = mDataManager.saveFinishedSession(projectId, workedInMinutes)
+        mSaveSubscription = mDataManager.saveFinishedSession(projectId, workedInMillis)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<FinishedSession>() {
                     @Override
                     public void onNext(FinishedSession finishedSession) {
+                        getView().finishedSessionSaved();
                     }
                 });
     }

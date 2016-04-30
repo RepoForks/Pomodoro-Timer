@@ -20,6 +20,7 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
 
 public interface DbAttributes {
     String ID = "id";
+    String PROJECT_NAME = "name";
     String SESSION_TIMESTAMP = "timestamp";
     String SESSION_WORKED = "workedTimeInMillis";
     String SESSION_PROJECT_ID = "projectId";

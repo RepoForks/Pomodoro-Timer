@@ -28,12 +28,13 @@ import android.view.MenuItem;
 
 import butterknife.Bind;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.ToolbarActivity;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.FragmentActivity;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.ProjectsFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings.SettingsActivity;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.statistics.StatisticsActivity;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.TimerFragment;
 
-public class NavigationActivity extends ToolbarActivity implements
+public class NavigationActivity extends FragmentActivity implements
         NavigationView.OnNavigationItemSelectedListener{
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
@@ -56,7 +57,7 @@ public class NavigationActivity extends ToolbarActivity implements
 
     @Override
     protected int contentView() {
-        return R.layout.activity_main;
+        return R.layout.main_activity;
     }
 
     private void setInitialFragment() {
@@ -82,7 +83,8 @@ public class NavigationActivity extends ToolbarActivity implements
         } else if (id == R.id.nav_projects) {
             setFragment(new ProjectsFragment(), ProjectsFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_statistics) {
-
+            Intent intent = new Intent(this, StatisticsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);

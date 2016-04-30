@@ -25,8 +25,8 @@ import android.content.SharedPreferences;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.PreferencePair;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 
 @Singleton
 public class PreferencesHelper {

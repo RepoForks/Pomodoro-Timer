@@ -18,7 +18,7 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 
 public interface SettingsView extends MvpView {

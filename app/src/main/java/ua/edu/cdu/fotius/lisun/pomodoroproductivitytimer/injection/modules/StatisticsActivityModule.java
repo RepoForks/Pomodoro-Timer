@@ -16,15 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules;
 
-import java.util.List;
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+import dagger.Module;
+import dagger.Provides;
 
-public interface ProjectsView extends MvpView {
-    void showProjects(List<Project> projects);
-    void showNoProjects();
-    void showProject(Project project);
+@Module
+public class StatisticsActivityModule {
+
+    private Context mContext;
+
+    public StatisticsActivityModule(AppCompatActivity context) {
+        mContext = context;
+    }
+
+    @Provides
+    Context provideApplication() {
+        return mContext;
+    }
 }

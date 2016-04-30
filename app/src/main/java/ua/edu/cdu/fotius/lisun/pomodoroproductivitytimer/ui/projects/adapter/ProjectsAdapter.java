@@ -37,7 +37,7 @@ import butterknife.OnClick;
 import rx.Observable;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 
 public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHolder>{
 
@@ -54,7 +54,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.cardview_single_project, parent, false);
+                .inflate(R.layout.projects_list_item, parent, false);
         return new ViewHolder(v);
     }
 

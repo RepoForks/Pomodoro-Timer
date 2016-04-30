@@ -29,11 +29,11 @@ import rx.Subscription;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesKeys;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.PreferencePair;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.PreferencePair;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerSettingsFragmentComponent;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.NumberDialogFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.NumberDialogFragment;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SettingsView {
 

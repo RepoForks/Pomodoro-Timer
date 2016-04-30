@@ -24,14 +24,16 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import rx.Observable;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 
 /* Considering that services is MVP views. Therefore we can separate Android specific code from
 *  pure java in Presenter*/
@@ -105,13 +107,19 @@ public class TimerService extends Service implements TimerServiceView {
                 dropTimer();
                 if(mSessionManager.getSession() == TimerSessionManager.WORK) {
                     Timber.i("Project id: %d; Duration: %d", mCurrentProject, mSessionManager.getDuration());
-                    mPresenter.saveFinishedSession(mCurrentProject, mSessionManager.getDuration());
+                    mPresenter.saveFinishedSession(mCurrentProject, TimeUnit.MINUTES.toMillis((long)mSessionManager.getDuration()));
+                } else {
+                    nextSessionAndPost();
                 }
-                nextSessionAndPost();
             }
         }.start();
         mIsTimerRunning = true;
         postState(TimerState.STATE_STARTED);
+    }
+
+    @Override
+    public void finishedSessionSaved() {
+        nextSessionAndPost();
     }
 
     public TimerState getInitState() {

@@ -42,7 +42,7 @@ public class MenuClickResult {
         return mProject;
     }
 
-    public int getAdapterPosition() {
+    public int getPosition() {
         return mAdapterPosition;
     }
 }

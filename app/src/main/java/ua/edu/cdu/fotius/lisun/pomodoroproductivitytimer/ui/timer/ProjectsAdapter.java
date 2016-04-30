@@ -66,7 +66,7 @@ public class ProjectsAdapter extends BaseAdapter {
         Context context = parent.getContext();
         if(convertView == null) {
             view = LayoutInflater.from(context)
-                    .inflate(R.layout.spinner_item, parent, false);
+                    .inflate(R.layout.projects_spinner_item, parent, false);
         } else {
             view = convertView;
         }

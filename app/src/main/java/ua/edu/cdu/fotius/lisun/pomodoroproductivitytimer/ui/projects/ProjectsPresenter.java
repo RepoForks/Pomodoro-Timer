@@ -28,8 +28,8 @@ import rx.schedulers.Schedulers;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.ShortenSubscriber;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ShortenSubscriber;
 
 public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
 
@@ -55,19 +55,6 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
         RxUtil.unsubscribe(mProjectSubscription);
     }
 
-    public void insertProject(Project project, int adapterPosition) {
-        RxUtil.unsubscribe(mInsertSubscription);
-        mInsertSubscription = mDataManager.insertProject(project)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ShortenSubscriber<Project>() {
-                    @Override
-                    public void onNext(Project project) {
-                        getView().showProject(project, adapterPosition);
-                    }
-                });
-    }
-
     public void createProject(String name) {
         RxUtil.unsubscribe(mCreateSubscription);
         mCreateSubscription = mDataManager.createProject(name)
@@ -81,20 +68,20 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                 });
     }
 
-    public void renameProject(int adapterPosition, long id, String name) {
+    public void renameProject(long id, String name) {
         RxUtil.unsubscribe(mRenameSubscription);
         mRenameSubscription = mDataManager.renameProject(id, name)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<Project>() {
+                    //TODO: error
                     @Override
                     public void onNext(Project project) {
-                        getView().updateProjectName(adapterPosition, project.getName());
                     }
                 });
     }
 
-    public void deleteProject(long id, int adapterPosition) {
+    public void deleteProject(long id) {
         RxUtil.unsubscribe(mDeleteSubscription);
         mDeleteSubscription = mDataManager.deleteProject(id)
                 .subscribeOn(Schedulers.io())
@@ -102,8 +89,9 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                 .subscribe(new ShortenSubscriber<Project>() {
                     @Override
                     public void onNext(Project project) {
-                        getView().removeProject(adapterPosition);
+
                     }
+                    //TODO: error
                 });
     }
 

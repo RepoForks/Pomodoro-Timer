@@ -16,15 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.scopes;
 
-import java.util.List;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+import javax.inject.Scope;
 
-public interface ProjectsView extends MvpView {
-    void showProjects(List<Project> projects);
-    void showNoProjects();
-    void showProject(Project project);
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PerActivity {
 }

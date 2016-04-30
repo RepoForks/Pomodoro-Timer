@@ -26,7 +26,7 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/toolbar_main"
+        layout="@layout/fragment_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

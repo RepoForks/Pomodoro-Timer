@@ -25,6 +25,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -46,9 +48,9 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.Da
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.adapter.MenuClickResult;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.adapter.ProjectsAdapter;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxBus;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.RxUtil;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.util.dialogs.ProjectNameDialogFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.ProjectNameDialogFragment;
 
 import static butterknife.ButterKnife.findById;
 
@@ -93,7 +95,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_projects, container, false);
+        View v = inflater.inflate(R.layout.projects_fragment, container, false);
         RecyclerView recyclerView = findById(v, R.id.rv_projects);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setAdapter(mProjectsAdapter);
@@ -130,27 +132,12 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     public void showNoProjects() {
         mProjectsAdapter.setProjects(new ArrayList<>());
         String message = getString(R.string.snack_msg_no_projects);
-        showSnack(message, null);
+        showSnack(message, null, null);
     }
 
     @Override
     public void showProject(Project project) {
         mProjectsAdapter.addProject(project);
-    }
-
-    @Override
-    public void showProject(Project project, int position) {
-        mProjectsAdapter.insertProject(project, position);
-    }
-
-    @Override
-    public void removeProject(int position) {
-        mProjectsAdapter.deleteProject(position);
-    }
-
-    @Override
-    public void updateProjectName(int adapterPosition, String newName) {
-        mProjectsAdapter.renameProject(adapterPosition, newName);
     }
 
     @OnClick(R.id.fab_new_project)
@@ -161,29 +148,62 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
 
     private Subscription subscribeToMenuEvents() {
         return mProjectsAdapter.getObserver().subscribe(result -> {
-            long id = result.getProject().getId();
-            String projectName = result.getProject().getName();
-            int position = result.getAdapterPosition();
             if (result.getAction() == MenuClickResult.ACTION_RENAME) {
-                String title = getString(R.string.dialog_rename_project_title);
-                showNameDialog(title, projectName, r -> {
-                    String newName = r.getNewName();
-                    mPresenter.renameProject(position, id, r.getNewName());
-                    String msg = getString(R.string.snack_msg_rename, projectName, newName);
-                    showSnack(msg, v -> mPresenter.renameProject(position, id, projectName));
-                });
+                onRenameAction(result.getProject(), result);
             } else if (result.getAction() == MenuClickResult.ACTION_DELETE) {
-                String message = getString(R.string.snack_msg_delete, projectName);
-                mPresenter.deleteProject(id, position);
-                showSnack(message, v -> mPresenter.insertProject(result.getProject(), position));
+                onDeleteAction(result.getProject(), result);
             }
         });
     }
 
-    private void showSnack(String message, View.OnClickListener action) {
+    private void onRenameAction(Project project, MenuClickResult result) {
+        String title = ProjectsFragment.this.getString(R.string.dialog_rename_project_title);
+        ProjectsFragment.this.showNameDialog(title, project.getName(), new Action1<ProjectNameDialogFragment.Result>() {
+            @Override
+            public void call(ProjectNameDialogFragment.Result r) {
+                String newName = r.getNewName();
+                mProjectsAdapter.renameProject(result.getPosition(), newName);
+                String msg = ProjectsFragment.this.getString(R.string.snack_msg_rename, project.getName(), newName);
+                showSnack(msg, v -> mProjectsAdapter.renameProject(result.getPosition(), project.getName()), new Snackbar.Callback() {
+                    //FIXME: bad idea to make async calls in onDismissed,
+                    //but db solutions is forcing to do this. Fix after redesigning db
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        super.onDismissed(snackbar, event);
+                        if(event != DISMISS_EVENT_ACTION) {
+                            mPresenter.renameProject(project.getId(), newName);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void onDeleteAction(Project project, MenuClickResult result) {
+        String message = ProjectsFragment.this.getString(R.string.snack_msg_delete, project.getName());
+        mProjectsAdapter.deleteProject(result.getPosition());
+        showSnack(message, v -> mProjectsAdapter.insertProject(result.getProject(), result.getPosition()), new Snackbar.Callback() {
+            //FIXME: bad idea to make async calls in onDismissed,
+            //but db solutions is forcing to do this. Fix after redesigning db
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                super.onDismissed(snackbar, event);
+                if(event != DISMISS_EVENT_ACTION) {
+                    mPresenter.deleteProject(project.getId());
+                }
+            }
+        });
+        Snackbar snack = Snackbar.make(mNewProjectFab, message, Snackbar.LENGTH_LONG);
+        snack.setAction(R.string.snack_undo, v -> mProjectsAdapter.insertProject(result.getProject(), result.getPosition()));
+    }
+
+    private void showSnack(String message, View.OnClickListener action, Snackbar.Callback callback) {
         Snackbar snack = Snackbar.make(mNewProjectFab, message, Snackbar.LENGTH_LONG);
         if (action != null) {
             snack.setAction(R.string.snack_undo, action);
+        }
+        if (callback != null) {
+            snack.setCallback(callback);
         }
         snack.show();
     }

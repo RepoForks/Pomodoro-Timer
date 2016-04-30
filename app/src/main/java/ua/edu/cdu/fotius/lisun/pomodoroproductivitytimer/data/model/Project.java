@@ -33,7 +33,6 @@ public class Project extends RealmObject {
     private long id = NO_ID_VALUE;
     private String name;
     private Date creationDate;
-    private long workSessionDuration;
 
     public long getId() {
         return id;

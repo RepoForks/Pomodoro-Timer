@@ -28,7 +28,7 @@ android {
 }
 
 ext {
-    supportVersion = '23.2.1'
+    supportVersion = '23.3.0'
     butterKnifeVersion = '7.0.1'
     timberVersion = '3.1.0'
     daggerVersion = '2.1'
@@ -43,6 +43,7 @@ dependencies {
     compile "com.android.support:cardview-v7:${supportVersion}"
     compile "com.android.support:design:${supportVersion}"
     compile "com.android.support:preference-v7:${supportVersion}"
+    compile "com.android.support:percent:${supportVersion}"
     compile "com.jakewharton:butterknife:${butterKnifeVersion}"
     compile "com.jakewharton.timber:timber:${timberVersion}"
     apt "com.google.dagger:dagger-compiler:${daggerVersion}"
@@ -50,5 +51,4 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
     compile "io.reactivex:rxandroid:${rxVersion}"
     compile "io.reactivex:rxjava:${rxVersion}"
-    compile 'com.android.support:support-v4:23.3.0'
 }

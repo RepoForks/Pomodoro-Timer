@@ -16,15 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers;
 
-import java.util.List;
+import org.junit.Test;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-public interface ProjectsView extends MvpView {
-    void showProjects(List<Project> projects);
-    void showNoProjects();
-    void showProject(Project project);
+
+public class MathUtilTest {
+
+    @Test
+    public void testPercentage() {
+        double expected = 17;
+        double actual = MathUtil.percentage(100, 17);
+        assertEquals(expected, actual, 0);
+        expected = 8.11;
+        actual = MathUtil.percentage(5321, 432);
+        assertEquals(expected, actual, 0.01);
+    }
 }

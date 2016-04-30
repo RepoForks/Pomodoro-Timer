@@ -21,9 +21,9 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
 import android.os.Bundle;
 
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.ToolbarActivity;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.FragmentActivity;
 
-public class SettingsActivity extends ToolbarActivity {
+public class SettingsActivity extends FragmentActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,6 @@ public class SettingsActivity extends ToolbarActivity {
 
     @Override
     protected int contentView() {
-        return R.layout.toolbar_main;
+        return R.layout.fragment_activity;
     }
 }

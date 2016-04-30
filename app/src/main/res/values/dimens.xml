@@ -28,7 +28,7 @@
     <dimen name="height_list_item">72dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="padding_small">8dp</dimen>
-    <dimen name="cardview_elevation">8dp</dimen>
+    <dimen name="cardview_elevation">6dp</dimen>
 
     <dimen name="spinner_item_padding_left">16dp</dimen>
     <dimen name="spinner_item_padding_right">16dp</dimen>
