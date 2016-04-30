@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -26,37 +26,35 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import javax.inject.Inject;
 
 import rx.Observable;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 
-public class TwoButtonsDialogFragment extends DialogFragment{
+public class NameDialogFragment extends DialogFragment {
 
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_MESSAGE = "message";
-    private static final String KEY_POS_BUTTON = "positive_button";
-    private static final String KEY_NEG_BUTTON = "negative_button";
-
-    public static Observable<Result> show(FragmentManager fragmentManager, RxBus rxBus,
-                                          String title, String message, String positiveButton,
-                                          String negativeButton) {
+    public static void showDialog(FragmentManager fragmentManager, String title) {
         Bundle args = new Bundle();
         args.putString(KEY_TITLE, title);
-        args.putString(KEY_MESSAGE, message);
-        args.putString(KEY_POS_BUTTON, positiveButton);
-        args.putString(KEY_NEG_BUTTON, negativeButton);
-        TwoButtonsDialogFragment fragment = new TwoButtonsDialogFragment();
+        NameDialogFragment fragment = new NameDialogFragment();
         fragment.setArguments(args);
-        fragment.show(fragmentManager, TwoButtonsDialogFragment.class.getName());
-        return rxBus.getObservable(Result.class);
+        fragment.show(fragmentManager, NameDialogFragment.class.getName());
     }
+
+    private static final String KEY_TITLE = "title";
 
     @Inject
     RxBus mRxBus;
-    private Context mContext;
+
+    protected Context mContext;
 
     @Override
     public void onAttach(Context context) {
@@ -74,33 +72,41 @@ public class TwoButtonsDialogFragment extends DialogFragment{
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        EditText editText = new EditText(mContext);
         return new AlertDialog.Builder(mContext)
                 .setTitle(getArguments().getString(KEY_TITLE))
-                .setMessage(getArguments().getString(KEY_MESSAGE))
-                .setPositiveButton(getArguments().getString(KEY_POS_BUTTON), (dialog, which) -> {
-                    mRxBus.send(new Result(Result.OK));
-                    TwoButtonsDialogFragment.this.dismiss();
-                })
-                .setNegativeButton(getArguments().getString(KEY_NEG_BUTTON),
-                        (dialog, which) -> {
-                            mRxBus.send(new Result(Result.CANCEL));
-                            TwoButtonsDialogFragment.this.dismiss();
-                        })
+                .setView(createWrapperLayout(editText))
+                .setPositiveButton(mContext.getString(R.string.dialog_positive_button), (dialog, which) ->
+                        sendResultAndClose(new Result(editText.getText().toString())))
+                .setNegativeButton(mContext.getString(R.string.dialog_negative_button),
+                        (dialog, which) -> NameDialogFragment.this.dismiss())
                 .create();
+
+    }
+
+    private void sendResultAndClose(Result result) {
+        mRxBus.send(result);
+        dismiss();
+    }
+
+    protected FrameLayout createWrapperLayout(EditText editText) {
+        FrameLayout.LayoutParams params = new FrameLayout
+                .LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+        FrameLayout frameLayout = new FrameLayout(mContext);
+        frameLayout.addView(editText, params);
+        return frameLayout;
     }
 
     public class Result {
-        public static final int OK = 1;
-        public static final int CANCEL = 2;
+        private String mName;
 
-        private int mResultCode;
-
-        public Result(int resultCode) {
-            mResultCode = resultCode;
+        public Result(String name) {
+            mName = name;
         }
 
-        public int getResultCode() {
-            return mResultCode;
+        public String getName() {
+            return mName;
         }
     }
 }

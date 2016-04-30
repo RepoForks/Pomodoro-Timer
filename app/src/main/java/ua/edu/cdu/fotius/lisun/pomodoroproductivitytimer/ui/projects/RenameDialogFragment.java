@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -34,43 +34,30 @@ import android.widget.FrameLayout;
 import javax.inject.Inject;
 
 import rx.Observable;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 
-public class ProjectNameDialogFragment extends DialogFragment {
+public class RenameDialogFragment extends NameDialogFragment {
 
-    public static Observable<Result> show(FragmentManager fragmentManager, RxBus rxBus,
-                                          String title, String initValue) {
+    public static void showDialog(FragmentManager fragmentManager, long projectId,
+                                  String title, String oldName, int listPosition) {
         Bundle args = new Bundle();
-        args.putString(KEY_INIT_VALUE, initValue);
+        args.putLong(KEY_ID, projectId);
+        args.putString(KEY_INIT_VALUE, oldName);
         args.putString(KEY_TITLE, title);
-        ProjectNameDialogFragment fragment = new ProjectNameDialogFragment();
+        args.putInt(KEY_LIST_POSITION, listPosition);
+        RenameDialogFragment fragment = new RenameDialogFragment();
         fragment.setArguments(args);
-        fragment.show(fragmentManager, ProjectNameDialogFragment.class.getName());
-        return rxBus.getObservable(Result.class);
+        fragment.show(fragmentManager, RenameDialogFragment.class.getName());
     }
 
     private static final String KEY_INIT_VALUE = "init_value";
+    private static final String KEY_LIST_POSITION = "list_position";
+    private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
 
-    @Inject
-    RxBus mRxBus;
-
-    private Context mContext;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        PomodoroProductivityTimerApplication
-                .get(mContext).getApplicationComponent().inject(this);
-    }
 
     @NonNull
     @Override
@@ -79,39 +66,51 @@ public class ProjectNameDialogFragment extends DialogFragment {
         String initText = getArguments().getString(KEY_INIT_VALUE, "");
         editText.setText(initText);
         editText.setSelection(initText.length());
+        long id = getArguments().getLong(KEY_ID);
+        int position = getArguments().getInt(KEY_LIST_POSITION);
         return new AlertDialog.Builder(mContext)
                 .setTitle(getArguments().getString(KEY_TITLE))
                 .setView(createWrapperLayout(editText))
-                .setPositiveButton(mContext.getString(R.string.dialog_positive_button), (dialog, which) -> {
-                    mRxBus.send(new Result(editText.getText().toString()));
-                    ProjectNameDialogFragment.this.dismiss();
-                })
+                .setPositiveButton(mContext.getString(R.string.dialog_positive_button), (dialog, which) ->
+                        sendResultAndClose(new Result(id, editText.getText().toString(), initText, position)))
                 .setNegativeButton(mContext.getString(R.string.dialog_negative_button),
-                        (dialog, which) -> {
-                            ProjectNameDialogFragment.this.dismiss();
-                        })
+                        (dialog, which) -> RenameDialogFragment.this.dismiss())
                 .create();
 
     }
 
-    private FrameLayout createWrapperLayout(EditText editText) {
-        FrameLayout.LayoutParams params = new FrameLayout
-                .LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-        FrameLayout frameLayout = new FrameLayout(mContext);
-        frameLayout.addView(editText, params);
-        return frameLayout;
+    private void sendResultAndClose(Result result) {
+        mRxBus.send(result);
+        dismiss();
     }
 
     public class Result {
         private String mNewName;
+        private long mProjectId;
+        private String mOldName;
+        private int mListPosition;
 
-        public Result(String newName) {
+        public Result(long projectId, String newName, String oldName, int listPosition) {
             mNewName = newName;
+            mProjectId = projectId;
+            mOldName = oldName;
+            mListPosition = listPosition;
+        }
+
+        public long getProjectId() {
+            return mProjectId;
         }
 
         public String getNewName() {
             return mNewName;
+        }
+
+        public String getOldName() {
+            return mOldName;
+        }
+
+        public int getListPosition() {
+            return mListPosition;
         }
     }
 }

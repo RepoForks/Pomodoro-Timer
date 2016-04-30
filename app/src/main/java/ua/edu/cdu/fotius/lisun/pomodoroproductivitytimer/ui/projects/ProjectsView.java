@@ -26,5 +26,7 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 public interface ProjectsView extends MvpView {
     void showProjects(List<Project> projects);
     void showNoProjects();
-    void showProject(Project project);
+    void showCreated(Project project);
+    void showRenamed(int atPosition, String name);
+    void projectDeleted(Project project, int atPosition);
 }

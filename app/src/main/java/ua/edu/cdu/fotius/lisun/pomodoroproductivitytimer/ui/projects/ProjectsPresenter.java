@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
@@ -63,12 +64,12 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                 .subscribe(new ShortenSubscriber<Project>() {
                     @Override
                     public void onNext(Project project) {
-                        getView().showProject(project);
+                        getView().showCreated(project);
                     }
                 });
     }
 
-    public void renameProject(long id, String name) {
+    public void renameProject(long id, String name, int adapterPosition) {
         RxUtil.unsubscribe(mRenameSubscription);
         mRenameSubscription = mDataManager.renameProject(id, name)
                 .subscribeOn(Schedulers.io())
@@ -77,11 +78,12 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                     //TODO: error
                     @Override
                     public void onNext(Project project) {
+                        getView().showRenamed(adapterPosition, project.getName());
                     }
                 });
     }
 
-    public void deleteProject(long id) {
+    public void deleteProject(long id, int adapterPosition) {
         RxUtil.unsubscribe(mDeleteSubscription);
         mDeleteSubscription = mDataManager.deleteProject(id)
                 .subscribeOn(Schedulers.io())
@@ -89,9 +91,8 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                 .subscribe(new ShortenSubscriber<Project>() {
                     @Override
                     public void onNext(Project project) {
-
+                        getView().projectDeleted(project, adapterPosition);
                     }
-                    //TODO: error
                 });
     }
 

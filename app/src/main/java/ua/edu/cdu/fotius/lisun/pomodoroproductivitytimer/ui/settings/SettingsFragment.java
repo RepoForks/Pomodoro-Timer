@@ -23,6 +23,8 @@ import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import rx.Subscription;
@@ -31,9 +33,10 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesKeys;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.PreferencePair;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.TimeUtil;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerSettingsFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.NumberDialogFragment;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SettingsView {
 
@@ -46,8 +49,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     @Inject
     RxBus mRxBus;
 
-    private Subscription mSubscription;
+    private Subscription mNumberDialogSubscription;
     private Context mContext;
+    private Preferences mPreferences;
 
     @Override
     public void onAttach(Context context) {
@@ -69,11 +73,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mNumberDialogSubscription = mRxBus.getObservable(NumberDialogFragment.Result.class)
+                .map(result -> new PreferencePair(result.getPref(), Integer.toString(result.getNewNumber())))
+                .subscribe(preferencePair -> mPresenter.savePreference(preferencePair));
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        if(mSubscription != null) {
-            mSubscription.unsubscribe();
-        }
+        RxUtil.unsubscribe(mNumberDialogSubscription);
     }
 
     @Override
@@ -107,17 +117,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
     private Preference.OnPreferenceClickListener createNumberPickerListener() {
        return pref -> {
-           //TODO: set initial value
-           mSubscription = NumberDialogFragment
-                   .show(getFragmentManager(), mRxBus, pref.getTitle().toString(), 0)
-                   .map(result -> new PreferencePair(pref.getKey(), Integer.toString(result.getNewNumber())))
-                   .subscribe(preferencePair -> mPresenter.savePreference(preferencePair));
+           NumberDialogFragment.show(getFragmentManager(), pref.getTitle().toString(), 0, pref.getKey());
            return true;
        };
     }
 
     @Override
     public void setPreferencesSummary(Preferences preferences) {
+        mPreferences = preferences;
         setPreferenceSummary(mPreferencesKeys.getWorkSessionDuration(),
                 preferences.getWorkSessionDuration());
         setPreferenceSummary(mPreferencesKeys.getShortBreakDuration(),

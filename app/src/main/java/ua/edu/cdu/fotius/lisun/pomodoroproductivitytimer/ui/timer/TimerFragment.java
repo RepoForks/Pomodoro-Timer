@@ -44,6 +44,7 @@ import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.QuestionDialogFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerTimerFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
@@ -52,7 +53,6 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerState;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.TwoButtonsDialogFragment;
 
 import static butterknife.ButterKnife.findById;
 
@@ -184,17 +184,17 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
                 mPresenter.loadTodayTotal();
                 RxUtil.unsubscribe(mDialogSubscription);
                 mDialogSubscription =
-                        TwoButtonsDialogFragment.show(getFragmentManager(), mRxBus,
+                        QuestionDialogFragment.show(getFragmentManager(), mRxBus,
                                 getString(R.string.break_dialog_title),
                                 getString(R.string.break_dialog_message),
                                 getString(R.string.break_dialog_take),
                                 getString(R.string.break_dialog_skip))
                                 .subscribe(result -> {
                                     if (result.getResultCode() ==
-                                            TwoButtonsDialogFragment.Result.OK) {
+                                            QuestionDialogFragment.Result.OK) {
                                         mService.startTimer();
                                     } else if (result.getResultCode() ==
-                                            TwoButtonsDialogFragment.Result.CANCEL) {
+                                            QuestionDialogFragment.Result.CANCEL) {
                                         mService.nextSession();
                                     }
                                 });

@@ -52,8 +52,9 @@
     <string name="menu_project_overflow_delete">Delete</string>
     <string name="dialog_rename_project_title">Rename project</string>
 
-    <string name="snack_msg_delete">Project \"%1$s\" deleted</string>
-    <string name="snack_msg_rename">Project \"%1$s\" renamed to \"%2$s\"</string>
+    <string name="snack_msg_deleted">Project \"%1$s\" deleted</string>
+    <string name="snack_msg_created">Project \"%1$s\" created</string>
+    <string name="snack_msg_renamed">Project renamed to \"%1$s\"</string>
     <string name="snack_msg_no_projects">You have no projects</string>
     <string name="snack_undo">UNDO</string>
     <string name="timer_fragment_session_work">Work</string>
