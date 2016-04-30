@@ -89,7 +89,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_start_24dp"/>
+            android:src="@drawable/ic_start_timer_24dp"/>
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

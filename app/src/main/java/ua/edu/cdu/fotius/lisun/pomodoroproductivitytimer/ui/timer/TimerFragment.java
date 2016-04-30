@@ -176,7 +176,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     private void updateSession(TimerState event) {
         int state = event.getState();
         if (state == TimerState.STATE_READY) {
-            mStartStopFab.setImageResource(R.drawable.ic_start_24dp);
+            mStartStopFab.setImageResource(R.drawable.ic_start_timer_24dp);
             showSessionName(event.getSession());
             showTime(event.getDuration(), 0);
             if ((event.getSession() == TimerSessionManager.BREAK)
@@ -201,9 +201,9 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
 
             }
         } else  if (state == TimerState.STATE_STARTED) {
-            mStartStopFab.setImageResource(R.drawable.ic_stop_24dp);
+            mStartStopFab.setImageResource(R.drawable.ic_stop_timer_24dp);
         } else if(state == TimerState.STATE_STOPPED) {
-            mStartStopFab.setImageResource(R.drawable.ic_start_24dp);
+            mStartStopFab.setImageResource(R.drawable.ic_start_timer_24dp);
         }
     }
 
