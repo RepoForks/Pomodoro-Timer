@@ -20,6 +20,9 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -64,12 +67,16 @@ public class TimerService extends Service implements TimerServiceView {
     private boolean mIsTimerRunning;
     private long mCurrentProject = Project.NO_ID_VALUE;
     private TimerSessionManager mSessionManager;
+    private Ringtone mRingtone;
 
     @Override
     public void onCreate() {
         super.onCreate();
         PomodoroProductivityTimerApplication.get(this)
                 .getApplicationComponent().inject(this);
+
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        mRingtone = RingtoneManager.getRingtone(this, notification);
         mBinder = new Binder();
         mPresenter.attach(this);
         mPresenter.loadPreferences();
@@ -104,6 +111,7 @@ public class TimerService extends Service implements TimerServiceView {
 
             @Override
             public void onFinish() {
+                playSound();
                 dropTimer();
                 if(mSessionManager.getSession() == TimerSessionManager.WORK) {
                     Timber.i("Project id: %d; Duration: %d", mCurrentProject, mSessionManager.getDuration());
@@ -115,6 +123,10 @@ public class TimerService extends Service implements TimerServiceView {
         }.start();
         mIsTimerRunning = true;
         postState(TimerState.STATE_STARTED);
+    }
+
+    private void playSound() {
+        mRingtone.play();
     }
 
     @Override
