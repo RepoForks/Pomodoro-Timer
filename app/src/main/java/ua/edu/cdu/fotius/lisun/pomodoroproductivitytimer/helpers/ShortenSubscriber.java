@@ -22,13 +22,7 @@ import rx.Subscriber;
 import timber.log.Timber;
 
 public abstract class ShortenSubscriber<T> extends Subscriber<T> {
-
     @Override
     public void onCompleted() {
-    }
-
-    @Override
-    public void onError(Throwable e) {
-        Timber.e(e, "");
     }
 }

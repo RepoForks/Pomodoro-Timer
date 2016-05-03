@@ -25,6 +25,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,7 +94,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
                         .getApplicationComponent())
                 .build().inject(this);
         mPresenter.attach(this);
-        mPresenter.loadProjects();
+        mPresenter.loadProjects(getString(R.string.timer_error_loading_projects));
     }
 
     @Override
@@ -109,7 +110,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
         ButterKnife.bind(this, v);
         Spinner spinner = findById(v, R.id.sp_projects);
         spinner.setAdapter(mProjectsAdapter);
-        mPresenter.loadTodayTotal();
+        loadTodaysTotal();
         return v;
     }
 
@@ -186,7 +187,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
             showTime(event.getDuration(), 0);
             if ((event.getSession() == TimerSessionManager.BREAK)
                     || (event.getSession() == TimerSessionManager.LONG_BREAK)) {
-                mPresenter.loadTodayTotal();
+                loadTodaysTotal();
                 mBreakDialogFragment = BreakDialogFragment.show(getFragmentManager());
             }
         } else  if (state == TimerState.STATE_STARTED) {
@@ -203,6 +204,10 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
             mBreakDialogFragment.dismiss();
             mBreakDialogFragment = null;
         }
+    }
+
+    private void loadTodaysTotal() {
+        mPresenter.loadTodayTotal(getString(R.string.timer_error_loading_total_quantity));
     }
 
     @Override
@@ -224,6 +229,11 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     @Override
     public void showTodaysTotal(int completed) {
         mWorkedTodayTv.setText(Integer.toString(completed));
+    }
+
+    @Override
+    public void showError(String error) {
+        Snackbar.make(mStartStopFab, error, Snackbar.LENGTH_SHORT).show();
     }
 
     @OnItemSelected(R.id.sp_projects)

@@ -19,6 +19,8 @@
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.statistics;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +32,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemSelected;
 import timber.log.Timber;
@@ -47,6 +50,8 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsV
     StatisticsAdapter mAdapter;
     @Inject
     StatisticsPresenter mPresenter;
+    @Bind(R.id.root_layout)
+    CoordinatorLayout mRootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,15 +100,21 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsV
 
     @OnItemSelected(R.id.sp_periods)
     public void spinnerItemSelected(int position) {
+        String errorMessage = getString(R.string.statistics_error_loading);
         if(position == 0) {
-            mPresenter.loadTodayStatistics();
+            mPresenter.loadTodayStatistics(errorMessage);
         } if(position == 1) {
-            mPresenter.loadWeekStatistics();
+            mPresenter.loadWeekStatistics(errorMessage);
         }
     }
 
     @Override
     public void showStatistics(List<ProjectStatistics> statistics) {
         mAdapter.setStatistics(statistics);
+    }
+
+    @Override
+    public void showError(String error) {
+        Snackbar.make(mRootLayout, error, Snackbar.LENGTH_SHORT).show();
     }
 }

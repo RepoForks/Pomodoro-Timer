@@ -24,4 +24,5 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 public interface SettingsView extends MvpView {
     void setPreferencesSummary(Preferences preferences);
     void setPreferenceSummary(String key, String value);
+    void showError(String error);
 }

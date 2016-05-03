@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+        <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:text="@string/time_init"
             android:textSize="@dimen/timer_font_size"/>
 
-        <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+        <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
             android:id="@+id/tv_session"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
-                <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+                <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
                     android:id="@+id/tv_worked_today"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                     android:layout_alignParentLeft="true"
                     android:textAppearance="@android:style/TextAppearance.Large" />
 
-                <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+                <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
                     android:id="@+id/tv_worked_today_counter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

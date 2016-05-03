@@ -111,9 +111,8 @@ public class TimerService extends Service implements TimerServiceView, TimerNoti
     }
 
     public void startTimer() {
-        //mTimer = new CountDownTimer(TimeUnit.MINUTES.toMillis(mSessionManager.getDuration()), SINGLE_ITERATION_TIME) {
-        //TODO: only debug
-        mTimer = new CountDownTimer(10000, SINGLE_ITERATION_TIME) {
+        mTimer = new CountDownTimer(TimeUnit.MINUTES.toMillis(mSessionManager.getDuration()), SINGLE_ITERATION_TIME) {
+        //mTimer = new CountDownTimer(10000, SINGLE_ITERATION_TIME) {
             @Override
             public void onTick(long millisUntilFinished) {
                 postTime(millisUntilFinished);

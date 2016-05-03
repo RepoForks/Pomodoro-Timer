@@ -30,7 +30,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
-        <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+        <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
             android:id="@+id/tv_project_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
-            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
                 android:id="@+id/tv_worked_time"
                 app:layout_widthPercent="50%"
                 app:layout_heightPercent="80%"
@@ -51,7 +51,7 @@
                 android:textSize="@dimen/statistics_digits_font_size"
                 android:gravity="center" />
 
-            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
                 android:id="@+id/tv_worked_time_label"
                 app:layout_widthPercent="50%"
                 app:layout_heightPercent="20%"
@@ -61,7 +61,7 @@
                 android:gravity="center"
                 android:text="@string/statistics_total_worked" />
 
-            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
                 android:id="@+id/tv_worked_percentage"
                 app:layout_widthPercent="50%"
                 app:layout_heightPercent="80%"
@@ -70,7 +70,7 @@
                 android:textSize="@dimen/statistics_digits_font_size"
                 android:gravity="center"/>
 
-            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
                 android:id="@+id/tv_worked_percentage_label"
                 app:layout_widthPercent="50%"
                 app:layout_heightPercent="20%"

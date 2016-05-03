@@ -20,6 +20,7 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
@@ -41,7 +42,6 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 public class SettingsFragment extends PreferenceFragmentCompat implements SettingsView {
 
     public static final String FRAGMENT_TAG = "settings_fragment";
-
     @Inject
     PreferencesKeys mPreferencesKeys;
     @Inject
@@ -51,7 +51,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
     private Subscription mNumberDialogSubscription;
     private Context mContext;
-    private Preferences mPreferences;
 
     @Override
     public void onAttach(Context context) {
@@ -69,7 +68,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                 .build().inject(this);
         addPreferenceListener();
         mPresenter.attach(this);
-        mPresenter.loadPreferences();
+        mPresenter.loadPreferences(getString(R.string.preferences_error_loading));
     }
 
     @Override
@@ -77,7 +76,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
         super.onStart();
         mNumberDialogSubscription = mRxBus.getObservable(NumberDialogFragment.Result.class)
                 .map(result -> new PreferencePair(result.getPref(), Integer.toString(result.getNewNumber())))
-                .subscribe(preferencePair -> mPresenter.savePreference(preferencePair));
+                .subscribe(preferencePair -> mPresenter.savePreference(preferencePair, getString(R.string.preferences_error_saving)));
     }
 
     @Override
@@ -124,7 +123,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
     @Override
     public void setPreferencesSummary(Preferences preferences) {
-        mPreferences = preferences;
         setPreferenceSummary(mPreferencesKeys.getWorkSessionDuration(),
                 preferences.getWorkSessionDuration());
         setPreferenceSummary(mPreferencesKeys.getShortBreakDuration(),
@@ -138,6 +136,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     @Override
     public void setPreferenceSummary(String key, String value) {
         findPreference(key).setSummary(getSummaryString(key, value));
+    }
+
+    @Override
+    public void showError(String error) {
+        Snackbar.make(getListView(), error, Snackbar.LENGTH_SHORT).show();
     }
 
     private String getSummaryString(String key, String value) {

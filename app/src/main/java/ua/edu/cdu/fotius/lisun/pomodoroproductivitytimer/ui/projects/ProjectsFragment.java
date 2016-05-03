@@ -98,7 +98,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setAdapter(mProjectsAdapter);
         ButterKnife.bind(this, v);
-        mPresenter.getProjects();
+        mPresenter.getProjects(getString(R.string.projects_error_loading));
         return v;
     }
 
@@ -113,12 +113,12 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
         super.onStart();
         mMenuSubscription = subscribeToMenuEvents();
         mNewNameDialogSubscription = mRxBus.getObservable(NameDialogFragment.Result.class)
-                .subscribe(result -> mPresenter.createProject(result.getName()));
+                .subscribe(result -> mPresenter.createProject(result.getName(), getString(R.string.projects_error_creating)));
         mRenameDialogSubscription = mRxBus.getObservable(RenameDialogFragment.Result.class)
                 .subscribe(result -> mPresenter.renameProject(result.getProjectId(),
-                        result.getNewName(),  result.getListPosition()));
+                        result.getNewName(),  result.getListPosition(), getString(R.string.projects_error_renaming)));
         mDeleteDialogSubscription = mRxBus.getObservable(DeleteDialogFragment.Result.class)
-                .subscribe(r -> mPresenter.deleteProject(r.getId(), r.getAdapterPosition()));
+                .subscribe(r -> mPresenter.deleteProject(r.getId(), r.getAdapterPosition(), getString(R.string.projects_error_deleting)));
     }
 
     @Override
@@ -159,6 +159,11 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
         mProjectsAdapter.deleteProject(position);
         String message = ProjectsFragment.this.getString(R.string.snack_msg_deleted, project.getName());
         showSnack(message);
+    }
+
+    @Override
+    public void showError(String error) {
+        showSnack(error);
     }
 
     @OnClick(R.id.fab_new_project)

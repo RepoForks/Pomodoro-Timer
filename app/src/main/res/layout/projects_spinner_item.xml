@@ -17,7 +17,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+<ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_project"
     android:layout_width="match_parent"

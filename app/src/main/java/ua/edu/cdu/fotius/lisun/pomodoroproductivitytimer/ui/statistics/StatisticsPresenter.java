@@ -40,23 +40,28 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
         mDataManager = dataManager;
     }
 
-    public void loadTodayStatistics() {
+    public void loadTodayStatistics(String errorMessage) {
         Date today = TimeUtil.timestampMidnight();
         Date now = TimeUtil.timestampNow();
-        loadStatistics(today, now);
+        loadStatistics(today, now, errorMessage);
     }
 
-    public void loadWeekStatistics() {
+    public void loadWeekStatistics(String errorMessage) {
         Date startOfWeek = TimeUtil.timestampStartOfWeek();
         Date now = TimeUtil.timestampNow();
-        loadStatistics(startOfWeek, now);
+        loadStatistics(startOfWeek, now, errorMessage);
     }
 
-    private void loadStatistics(Date from, Date to) {
+    private void loadStatistics(Date from, Date to, String errorMessage) {
         mDataManager.getStatistics(from, to)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<List<ProjectStatistics>>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(errorMessage);
+                    }
+
                     @Override
                     public void onNext(List<ProjectStatistics> stats) {
                         getView().showStatistics(stats);

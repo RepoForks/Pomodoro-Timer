@@ -51,12 +51,17 @@ public class TimerPresenter extends MvpPresenter<TimerView> {
         RxUtil.unsubscribe(mTotalsSubscription);
     }
 
-    public void loadProjects() {
+    public void loadProjects(String errorMessage) {
         RxUtil.unsubscribe(mProjectsSubscription);
         mProjectsSubscription = mDataManager.getProjects()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<List<Project>>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(errorMessage);
+                    }
+
                     @Override
                     public void onNext(List<Project> projects) {
                         Project unknown = new Project();
@@ -68,7 +73,7 @@ public class TimerPresenter extends MvpPresenter<TimerView> {
                 });
     }
 
-    public void loadTodayTotal() {
+    public void loadTodayTotal(String errorMessage) {
         RxUtil.unsubscribe(mTotalsSubscription);
         Date today = TimeUtil.timestampMidnight();
         Date now = TimeUtil.timestampNow();
@@ -78,8 +83,12 @@ public class TimerPresenter extends MvpPresenter<TimerView> {
                 .map(List::size)
                 .subscribe(new ShortenSubscriber<Integer>() {
                     @Override
+                    public void onError(Throwable e) {
+                        getView().showError(errorMessage);
+                    }
+
+                    @Override
                     public void onNext(Integer integer) {
-                        Timber.i("loadTotal.Update");
                         getView().showTodaysTotal(integer);
                     }
                 });

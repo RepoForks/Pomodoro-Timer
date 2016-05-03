@@ -30,4 +30,5 @@ public interface TimerView extends MvpView{
     void showSessionName(int sessionType);
     void showProjects(List<Project> projects);
     void showTodaysTotal(int completed);
+    void showError(String error);
 }

@@ -88,6 +88,15 @@
     <string name="notification_work_content">Time to work. Ready?</string>
     <string name="notification_start">Start</string>
     <string name="notification_dismiss">Dismiss</string>
+    <string name="projects_error_loading">Error loading projects</string>
+    <string name="projects_error_renaming">Error renaming project</string>
+    <string name="projects_error_creating">Error creating project</string>
+    <string name="projects_error_deleting">Error deleting project</string>
+    <string name="statistics_error_loading">Error loading statistics</string>
+    <string name="timer_error_loading_total_quantity">Error loading today\'s finished projects quantity</string>
+    <string name="timer_error_loading_projects">Error loading projects</string>
+    <string name="preferences_error_loading">Error loading preferences</string>
+    <string name="preferences_error_saving">Error saving preferences</string>
 
     <string-array name="toolbar_spinner_values">
         <item>Today</item>

@@ -29,4 +29,5 @@ public interface ProjectsView extends MvpView {
     void showCreated(Project project);
     void showRenamed(int atPosition, String name);
     void projectDeleted(Project project, int atPosition);
+    void showError(String error);
 }

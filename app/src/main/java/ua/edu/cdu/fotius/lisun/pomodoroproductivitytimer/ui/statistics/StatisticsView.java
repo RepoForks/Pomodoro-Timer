@@ -25,4 +25,5 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
 
 public interface StatisticsView extends MvpView {
     void showStatistics(List<ProjectStatistics> statistics);
+    void showError(String error);
 }

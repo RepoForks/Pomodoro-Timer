@@ -33,9 +33,7 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ShortenSubscriber;
 
 public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
-
     private final DataManager mDataManager;
-    private Subscription mInsertSubscription;
     private Subscription mCreateSubscription;
     private Subscription mRenameSubscription;
     private Subscription mDeleteSubscription;
@@ -49,19 +47,23 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
     @Override
     public void detach() {
         super.detach();
-        RxUtil.unsubscribe(mInsertSubscription);
         RxUtil.unsubscribe(mCreateSubscription);
         RxUtil.unsubscribe(mRenameSubscription);
         RxUtil.unsubscribe(mDeleteSubscription);
         RxUtil.unsubscribe(mProjectSubscription);
     }
 
-    public void createProject(String name) {
+    public void createProject(String name, String error) {
         RxUtil.unsubscribe(mCreateSubscription);
         mCreateSubscription = mDataManager.createProject(name)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<Project>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(error);
+                    }
+
                     @Override
                     public void onNext(Project project) {
                         getView().showCreated(project);
@@ -69,13 +71,17 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                 });
     }
 
-    public void renameProject(long id, String name, int adapterPosition) {
+    public void renameProject(long id, String name, int adapterPosition, String error) {
         RxUtil.unsubscribe(mRenameSubscription);
         mRenameSubscription = mDataManager.renameProject(id, name)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<Project>() {
-                    //TODO: error
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(error);
+                    }
+
                     @Override
                     public void onNext(Project project) {
                         getView().showRenamed(adapterPosition, project.getName());
@@ -83,12 +89,17 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                 });
     }
 
-    public void deleteProject(long id, int adapterPosition) {
+    public void deleteProject(long id, int adapterPosition, String error) {
         RxUtil.unsubscribe(mDeleteSubscription);
         mDeleteSubscription = mDataManager.deleteProject(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<Project>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(error);
+                    }
+
                     @Override
                     public void onNext(Project project) {
                         getView().projectDeleted(project, adapterPosition);
@@ -96,12 +107,17 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                 });
     }
 
-    public void getProjects() {
+    public void getProjects(String error) {
         RxUtil.unsubscribe(mProjectSubscription);
         mProjectSubscription = mDataManager.getProjects()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<List<Project>>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(error);
+                    }
+
                     @Override
                     public void onNext(List<Project> projects) {
                         if (projects.isEmpty()) {

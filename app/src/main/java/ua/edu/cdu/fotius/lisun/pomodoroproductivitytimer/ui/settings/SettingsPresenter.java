@@ -48,12 +48,17 @@ public class SettingsPresenter extends MvpPresenter<SettingsView> {
         RxUtil.unsubscribe(mLoadSubscription);
     }
 
-    public void savePreference(PreferencePair preferencePair) {
+    public void savePreference(PreferencePair preferencePair, String errorMessage) {
         RxUtil.unsubscribe(mSaveSubscription);
         mSaveSubscription = mDataManager.savePreference(preferencePair)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<PreferencePair>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(errorMessage);
+                    }
+
                     @Override
                     public void onNext(PreferencePair preferencePair) {
                         getView().setPreferenceSummary(preferencePair.getKey(), preferencePair.getValue());
@@ -61,12 +66,17 @@ public class SettingsPresenter extends MvpPresenter<SettingsView> {
                 });
     }
 
-    public void loadPreferences() {
+    public void loadPreferences(String errorMessage) {
         RxUtil.unsubscribe(mLoadSubscription);
         mLoadSubscription = mDataManager.getPreferences()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ShortenSubscriber<Preferences>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(errorMessage);
+                    }
+
                     @Override
                     public void onNext(Preferences preferences) {
                         getView().setPreferencesSummary(preferences);
