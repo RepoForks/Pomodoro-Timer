@@ -38,17 +38,15 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
-import rx.functions.Action1;
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerProjectsFragmentComponent;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.adapter.MenuClickResult;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.adapter.ProjectsAdapter;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
 
 import static butterknife.ButterKnife.findById;
 
@@ -67,6 +65,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     private Context mContext;
     private Subscription mNewNameDialogSubscription;
     private Subscription mRenameDialogSubscription;
+    private Subscription mDeleteDialogSubscription;
     private Subscription mMenuSubscription;
 
     @Override
@@ -118,6 +117,8 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
         mRenameDialogSubscription = mRxBus.getObservable(RenameDialogFragment.Result.class)
                 .subscribe(result -> mPresenter.renameProject(result.getProjectId(),
                         result.getNewName(),  result.getListPosition()));
+        mDeleteDialogSubscription = mRxBus.getObservable(DeleteDialogFragment.Result.class)
+                .subscribe(r -> mPresenter.deleteProject(r.getId(), r.getAdapterPosition()));
     }
 
     @Override
@@ -126,6 +127,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
         RxUtil.unsubscribe(mMenuSubscription);
         RxUtil.unsubscribe(mNewNameDialogSubscription);
         RxUtil.unsubscribe(mRenameDialogSubscription);
+        RxUtil.unsubscribe(mDeleteDialogSubscription);
     }
 
     @Override
@@ -173,7 +175,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
                 RenameDialogFragment.showDialog(ProjectsFragment.this.getFragmentManager(), project.getId(), title,
                         project.getName(), result.getPosition());
             } else if (MenuClickResult.ACTION_DELETE.equals(result.getAction())) {
-                mPresenter.deleteProject(project.getId(), result.getPosition());
+                DeleteDialogFragment.show(getFragmentManager(), project.getId(), result.getPosition());
             }
         });
     }

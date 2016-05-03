@@ -57,9 +57,9 @@
     <string name="snack_msg_renamed">Project renamed to \"%1$s\"</string>
     <string name="snack_msg_no_projects">You have no projects</string>
     <string name="snack_undo">UNDO</string>
-    <string name="timer_fragment_session_work">Work</string>
-    <string name="timer_fragment_break">Break</string>
-    <string name="timer_fragment_long_break">Long break</string>
+    <string name="work_prompt">Work</string>
+    <string name="break_prompt">Break</string>
+    <string name="long_break_prompt">Long break</string>
     <string name="break_dialog_title">Break time</string>
     <string name="break_dialog_message">Take a break?</string>
     <string name="break_dialog_take">Take</string>
@@ -69,6 +69,25 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="statistics_total_worked">Total worked</string>
+    <string name="statistics_worked_percentage">Worked percentage</string>
+    <string name="delete_dialog_title">Delete</string>
+    <string name="delete_dialog_message">Are you sure you want to delete this project?</string>
+    <string name="delete_dialog_positive">Delete</string>
+    <string name="delete_dialog_negative">Cancel</string>
+
+    <string name="notification_title">%1$s in progress</string>
+    <string name="notification_stop">Stop</string>
+    <string name="notification_break_title">Break</string>
+    <string name="notification_break_content">Take a break?</string>
+    <string name="notification_break_take_action">Take</string>
+    <string name="notification_break_skip_action">Skip</string>
+    <string name="notification_time_left">%1$d left</string>
+    <string name="notification_work_title">Work</string>
+    <string name="notification_work_content">Time to work. Ready?</string>
+    <string name="notification_start">Start</string>
+    <string name="notification_dismiss">Dismiss</string>
 
     <string-array name="toolbar_spinner_values">
         <item>Today</item>

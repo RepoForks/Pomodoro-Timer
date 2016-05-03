@@ -55,12 +55,8 @@
 
     <style name="StatisticsTextViewStyle" >
         <item name="android:singleLine">true</item>
-        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Medium</item>
     </style>
 
-    <style name="StatisticsCardViewStyle" >
-        <item name="android:layout_margin">@dimen/margin_small</item>
-        <item name="cardElevation">@dimen/cardview_elevation</item>
-    </style>
 </resources>

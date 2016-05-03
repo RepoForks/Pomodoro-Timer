@@ -25,6 +25,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,34 +41,29 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import rx.Subscription;
-import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.dialogs.QuestionDialogFragment;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerTimerFragmentComponent;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimeUpdate;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerSessionManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerState;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseFragment;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
 
 import static butterknife.ButterKnife.findById;
 
 
 public class TimerFragment extends BaseFragment implements TimerView, ServiceConnection {
-
     public static String FRAGMENT_TAG = "timer_fragment";
-
     @Inject
     RxBus mRxBus;
     @Inject
     ProjectsAdapter mProjectsAdapter;
     @Inject
     TimerPresenter mPresenter;
-
     @Bind(R.id.tv_time)
     TextView mTimeTv;
     @Bind(R.id.fab_start_stop_timer)
@@ -76,12 +72,12 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     TextView mSessionNameTv;
     @Bind(R.id.tv_worked_today_counter)
     TextView mWorkedTodayTv;
-
     private Context mContext;
     private Subscription mTimeUpdateSubscription;
     private Subscription mStateUpdateSubscription;
-    private Subscription mDialogSubscription;
+    private Subscription mBreakDialogSubscription;
     private TimerService mService;
+    private DialogFragment mBreakDialogFragment;
 
     @Override
     public void onAttach(Context context) {
@@ -128,6 +124,14 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
         super.onStart();
         Intent intent = new Intent(mContext, TimerService.class);
         mContext.bindService(intent, this, Context.BIND_AUTO_CREATE);
+        mBreakDialogSubscription = mRxBus.getObservable(BreakDialogFragment.Result.class)
+                .subscribe(result -> {
+                    if (result.getResultCode() == BreakDialogFragment.Result.TAKE) {
+                        mService.startTimer();
+                    } else if (result.getResultCode() == BreakDialogFragment.Result.SKIP) {
+                        mService.nextSession();
+                    }
+                });
     }
 
     @Override
@@ -135,7 +139,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
         super.onStop();
         RxUtil.unsubscribe(mTimeUpdateSubscription);
         RxUtil.unsubscribe(mStateUpdateSubscription);
-        RxUtil.unsubscribe(mDialogSubscription);
+        RxUtil.unsubscribe(mBreakDialogSubscription);
         mContext.unbindService(this);
     }
 
@@ -149,8 +153,8 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     }
 
     @Override
-    public void showTime(Time time) {
-        showTime(time.getMinutes(), time.getSeconds());
+    public void showTime(TimeUpdate timeUpdate) {
+        showTime(timeUpdate.getMinutes(), timeUpdate.getSeconds());
     }
 
     private void showTime(long minutes, long seconds) {
@@ -174,6 +178,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
     }
 
     private void updateSession(TimerState event) {
+        dismissBreakDialog();
         int state = event.getState();
         if (state == TimerState.STATE_READY) {
             mStartStopFab.setImageResource(R.drawable.ic_start_timer_24dp);
@@ -182,39 +187,32 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
             if ((event.getSession() == TimerSessionManager.BREAK)
                     || (event.getSession() == TimerSessionManager.LONG_BREAK)) {
                 mPresenter.loadTodayTotal();
-                RxUtil.unsubscribe(mDialogSubscription);
-                mDialogSubscription =
-                        QuestionDialogFragment.show(getFragmentManager(), mRxBus,
-                                getString(R.string.break_dialog_title),
-                                getString(R.string.break_dialog_message),
-                                getString(R.string.break_dialog_take),
-                                getString(R.string.break_dialog_skip))
-                                .subscribe(result -> {
-                                    if (result.getResultCode() ==
-                                            QuestionDialogFragment.Result.OK) {
-                                        mService.startTimer();
-                                    } else if (result.getResultCode() ==
-                                            QuestionDialogFragment.Result.CANCEL) {
-                                        mService.nextSession();
-                                    }
-                                });
-
+                mBreakDialogFragment = BreakDialogFragment.show(getFragmentManager());
             }
         } else  if (state == TimerState.STATE_STARTED) {
             mStartStopFab.setImageResource(R.drawable.ic_stop_timer_24dp);
+
         } else if(state == TimerState.STATE_STOPPED) {
             mStartStopFab.setImageResource(R.drawable.ic_start_timer_24dp);
+        }
+    }
+
+    //if action has been performed from notification
+    private void dismissBreakDialog() {
+        if(mBreakDialogFragment != null) {
+            mBreakDialogFragment.dismiss();
+            mBreakDialogFragment = null;
         }
     }
 
     @Override
     public void showSessionName(int sessionType) {
           if(sessionType == TimerSessionManager.WORK){
-              mSessionNameTv.setText(R.string.timer_fragment_session_work);
+              mSessionNameTv.setText(R.string.work_prompt);
           } else if(sessionType == TimerSessionManager.BREAK) {
-              mSessionNameTv.setText(R.string.timer_fragment_break);
+              mSessionNameTv.setText(R.string.break_prompt);
           } else if(sessionType == TimerSessionManager.LONG_BREAK) {
-              mSessionNameTv.setText(R.string.timer_fragment_long_break);
+              mSessionNameTv.setText(R.string.long_break_prompt);
           }
     }
 
@@ -230,7 +228,6 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
 
     @OnItemSelected(R.id.sp_projects)
     public void spinnerItemSelected(int position, long id) {
-        Timber.i("Spinner item selected. Position: %d; ID: %d;", position, id);
         Project project = mProjectsAdapter.getProject(position);
         mService.setProject(project.getId());
     }

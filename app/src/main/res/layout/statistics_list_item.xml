@@ -17,55 +17,71 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                               xmlns:app="http://schemas.android.com/apk/res-auto"
-                                               android:layout_width="match_parent"
-                                               android:layout_height="@dimen/height_list_item">
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="200dp"
+                                    android:layout_margin="@dimen/margin_small"
+                                    app:cardElevation="@dimen/cardview_elevation" >
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cv_project_name"
-        android:layout_alignParentLeft="true"
-        app:layout_heightPercent="100%"
-        app:layout_widthPercent="50%"
-        style="@style/StatisticsCardViewStyle" >
 
-        <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
             android:id="@+id/tv_project_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/StatisticsTextViewStyle" />
+            android:layout_gravity="center_horizontal"
+            android:singleLine="true"
+            android:textAppearance="@android:style/TextAppearance.Large" />
 
-    </android.support.v7.widget.CardView>
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cv_worked_time"
-        android:layout_toRightOf="@+id/cv_project_name"
-        app:layout_heightPercent="100%"
-        app:layout_widthPercent="20%"
-        style="@style/StatisticsCardViewStyle" >
+            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+                android:id="@+id/tv_worked_time"
+                app:layout_widthPercent="50%"
+                app:layout_heightPercent="80%"
+                android:layout_alignParentLeft="true"
+                android:singleLine="true"
+                android:textSize="@dimen/statistics_digits_font_size"
+                android:gravity="center" />
 
-        <TextView
-            android:id="@+id/tv_worked_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/StatisticsTextViewStyle" />
+            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+                android:id="@+id/tv_worked_time_label"
+                app:layout_widthPercent="50%"
+                app:layout_heightPercent="20%"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/tv_worked_time"
+                android:singleLine="true"
+                android:gravity="center"
+                android:text="@string/statistics_total_worked" />
 
-    </android.support.v7.widget.CardView>
+            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+                android:id="@+id/tv_worked_percentage"
+                app:layout_widthPercent="50%"
+                app:layout_heightPercent="80%"
+                android:layout_toRightOf="@id/tv_worked_time"
+                android:singleLine="true"
+                android:textSize="@dimen/statistics_digits_font_size"
+                android:gravity="center"/>
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cv_worked_percentage"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/cv_worked_time"
-        app:layout_heightPercent="100%"
-        app:layout_widthPercent="30%"
-        style="@style/StatisticsCardViewStyle">
+            <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer.RobotoTextView
+                android:id="@+id/tv_worked_percentage_label"
+                app:layout_widthPercent="50%"
+                app:layout_heightPercent="20%"
+                android:layout_below="@id/tv_worked_percentage"
+                android:layout_toRightOf="@id/tv_worked_time_label"
+                android:singleLine="true"
+                android:gravity="center"
+                android:text="@string/statistics_worked_percentage" />
 
-        <TextView
-            android:id="@+id/tv_worked_percentage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/StatisticsTextViewStyle" />
+        </android.support.percent.PercentRelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </LinearLayout>
 
-</android.support.percent.PercentRelativeLayout>
+</android.support.v7.widget.CardView>

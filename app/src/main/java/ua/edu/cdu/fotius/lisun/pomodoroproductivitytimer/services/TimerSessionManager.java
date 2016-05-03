@@ -18,6 +18,7 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 
 public class TimerSessionManager {

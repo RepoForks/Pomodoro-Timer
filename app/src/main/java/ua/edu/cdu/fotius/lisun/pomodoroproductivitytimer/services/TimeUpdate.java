@@ -16,18 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.timer;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimeUpdate;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+public class TimeUpdate {
+    private long mMinutes;
+    private long mSeconds;
+    private int mSession;
 
-public interface TimerView extends MvpView{
-    void showTime(TimeUpdate timeUpdate);
-    /*TimerSessionManager.WORK, TimerSessionManager.BREAK, etc.*/
-    void showSessionName(int sessionType);
-    void showProjects(List<Project> projects);
-    void showTodaysTotal(int completed);
+    public TimeUpdate(int session, long millis) {
+        mMinutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        mSeconds = TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(mMinutes);
+        mSession = session;
+    }
+
+    public long getMinutes() {
+        return mMinutes;
+    }
+
+    public long getSeconds() {
+        return mSeconds;
+    }
+
+    public int getSession() {
+        return mSession;
+    }
 }

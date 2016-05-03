@@ -19,25 +19,20 @@
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.NumberPicker;
 
-import javax.inject.Inject;
-
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseDialogFragment;
 
-public class NumberDialogFragment extends DialogFragment{
+import static butterknife.ButterKnife.findById;
+
+public class NumberDialogFragment extends BaseDialogFragment {
 
     public static void show(FragmentManager fragmentManager, String title, long initValue, String pref) {
         Bundle args = new Bundle();
@@ -55,55 +50,24 @@ public class NumberDialogFragment extends DialogFragment{
     private static final int NUMBER_PICKER_DEFAULT_MAX = 99;
     private static final int NUMBER_PICKER_DEFAULT_MIN = 2;
 
-    @Inject
-    RxBus mRxBus;
-    private Context mContext;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        PomodoroProductivityTimerApplication
-                .get(mContext).getApplicationComponent().inject(this);
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        NumberPicker numberPicker = createNumberPicker();
-        return new AlertDialog.Builder(mContext)
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.dialog_number_picker, null);
+        NumberPicker numberPicker = findById(v, R.id.number_picker);
+        numberPicker.setMaxValue(NUMBER_PICKER_DEFAULT_MAX);
+        numberPicker.setMinValue(NUMBER_PICKER_DEFAULT_MIN);
+        return new AlertDialog.Builder(getContext())
                 .setTitle(getArguments().getString(KEY_TITLE))
-                .setView(createWrapperLayout(numberPicker))
-                .setPositiveButton(mContext.getString(R.string.dialog_positive_button), (dialog, which) -> {
-                    mRxBus.send(new Result(numberPicker.getValue(), getArguments().getString(KEY_PREF)));
+                .setView(v)
+                .setPositiveButton(getString(R.string.dialog_positive_button), (dialog, which) -> {
+                    getRxBus().send(new Result(numberPicker.getValue(), getArguments().getString(KEY_PREF)));
                     NumberDialogFragment.this.dismiss();
                 })
-                .setNegativeButton(mContext.getString(R.string.dialog_negative_button),
+                .setNegativeButton(getString(R.string.dialog_negative_button),
                         (dialog, which) -> NumberDialogFragment.this.dismiss())
                 .create();
 
-    }
-
-    private NumberPicker createNumberPicker() {
-        NumberPicker numberPicker = new NumberPicker(mContext);
-        numberPicker.setMaxValue(NUMBER_PICKER_DEFAULT_MAX);
-        numberPicker.setMinValue(NUMBER_PICKER_DEFAULT_MIN);
-        numberPicker.setWrapSelectorWheel(false);
-        return numberPicker;
-    }
-
-    private FrameLayout createWrapperLayout(NumberPicker numberPicker) {
-        FrameLayout.LayoutParams params = new FrameLayout
-                .LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-        FrameLayout frameLayout = new FrameLayout(mContext);
-        frameLayout.addView(numberPicker, params);
-        return frameLayout;
     }
 
     public class Result {

@@ -29,7 +29,6 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ProjectStatistics;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ShortenSubscriber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.TimeUtil;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.Time;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
 
 public class StatisticsPresenter extends MvpPresenter<StatisticsView> {

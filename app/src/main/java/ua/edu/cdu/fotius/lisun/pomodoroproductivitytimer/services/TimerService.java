@@ -18,6 +18,7 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.media.Ringtone;
@@ -37,13 +38,17 @@ import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTim
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerTimerServiceComponent;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.TimerServiceModule;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.notification.TimerNotificationManager;
 
 /* Considering that services is MVP views. Therefore we can separate Android specific code from
 *  pure java in Presenter*/
-public class TimerService extends Service implements TimerServiceView {
+public class TimerService extends Service implements TimerServiceView, TimerNotificationManager.NotificationActions {
+
     public class Binder extends android.os.Binder {
-        public Observable<Time> getTimeUpdateEvents() {
-            return mRxBus.getObservable(Time.class);
+        public Observable<TimeUpdate> getTimeUpdateEvents() {
+            return mRxBus.getObservable(TimeUpdate.class);
         }
 
         public Observable<TimerState> getStateUpdateEvents() {
@@ -55,13 +60,14 @@ public class TimerService extends Service implements TimerServiceView {
         }
     }
 
-    private final int SINGLE_ITERATION_TIME = 10;
-
     @Inject
     RxBus mRxBus;
     @Inject
     TimerServicePresenter mPresenter;
+    @Inject
+    TimerNotificationManager mNotificationManager;
 
+    private final int SINGLE_ITERATION_TIME = 10;
     private android.os.Binder mBinder;
     private CountDownTimer mTimer;
     private boolean mIsTimerRunning;
@@ -72,9 +78,12 @@ public class TimerService extends Service implements TimerServiceView {
     @Override
     public void onCreate() {
         super.onCreate();
-        PomodoroProductivityTimerApplication.get(this)
-                .getApplicationComponent().inject(this);
-
+        DaggerTimerServiceComponent.builder()
+                .timerServiceModule(new TimerServiceModule(this))
+                .applicationComponent(PomodoroProductivityTimerApplication.get(this)
+                        .getApplicationComponent())
+                .build()
+                .inject(this);
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         mRingtone = RingtoneManager.getRingtone(this, notification);
         mBinder = new Binder();
@@ -89,21 +98,22 @@ public class TimerService extends Service implements TimerServiceView {
         mPresenter.detach();
     }
 
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
 
-    @Override
-    public void setPreferences(Preferences preferences) {
-        mSessionManager = new TimerSessionManager(preferences);
-    }
-
     public void startTimer() {
         //mTimer = new CountDownTimer(TimeUnit.MINUTES.toMillis(mSessionManager.getDuration()), SINGLE_ITERATION_TIME) {
         //TODO: only debug
-        mTimer = new CountDownTimer(4000, SINGLE_ITERATION_TIME) {
+        mTimer = new CountDownTimer(10000, SINGLE_ITERATION_TIME) {
             @Override
             public void onTick(long millisUntilFinished) {
                 postTime(millisUntilFinished);
@@ -113,66 +123,39 @@ public class TimerService extends Service implements TimerServiceView {
             public void onFinish() {
                 playSound();
                 dropTimer();
-                if(mSessionManager.getSession() == TimerSessionManager.WORK) {
-                    Timber.i("Project id: %d; Duration: %d", mCurrentProject, mSessionManager.getDuration());
-                    mPresenter.saveFinishedSession(mCurrentProject, TimeUnit.MINUTES.toMillis((long)mSessionManager.getDuration()));
+                if (mSessionManager.getSession() == TimerSessionManager.WORK) {
+                    mPresenter.saveFinishedSession(mCurrentProject,
+                            TimeUnit.MINUTES.toMillis((long) mSessionManager.getDuration()));
                 } else {
                     nextSessionAndPost();
                 }
             }
         }.start();
         mIsTimerRunning = true;
+        mNotificationManager.start(new TimeUpdate(mSessionManager.getSession(),
+                TimeUnit.MINUTES.toMillis(mSessionManager.getDuration())));
+
+        startService(new Intent(getApplicationContext(), this.getClass()));
+
         postState(TimerState.STATE_STARTED);
     }
 
-    private void playSound() {
-        mRingtone.play();
-    }
-
-    @Override
-    public void finishedSessionSaved() {
-        nextSessionAndPost();
+    public void stopTimer() {
+        if ((mTimer != null) && mIsTimerRunning) {
+            mTimer.cancel();
+            dropTimer();
+        }
+        mNotificationManager.stop();
+        stopSelf();
+        postState(TimerState.STATE_STOPPED);
     }
 
     public TimerState getInitState() {
-        return getStateInstance(TimerState.STATE_READY);
+        return createStateInstance(TimerState.STATE_READY);
     }
 
     public void nextSession() {
         nextSessionAndPost();
-    }
-
-    private void nextSessionAndPost() {
-        mSessionManager.nextSession();
-        postState(TimerState.STATE_READY);
-    }
-
-    private void postTime(long millis) {
-        mRxBus.send(new Time(millis));
-    }
-
-    private void postState(int state) {
-        TimerState event = getStateInstance(state);
-        mRxBus.send(event);
-    }
-
-    private TimerState getStateInstance(int state) {
-        return new TimerState(state,
-                mSessionManager.getDuration(), mSessionManager.getSession());
-    }
-
-    private void dropTimer() {
-        postTime(0);
-        mTimer = null;
-        mIsTimerRunning = false;
-    }
-
-    public void stopTimer() {
-        if((mTimer != null) && mIsTimerRunning) {
-            mTimer.cancel();
-            dropTimer();
-        }
-        postState(TimerState.STATE_STOPPED);
     }
 
     public boolean isTimerRunning() {
@@ -181,5 +164,66 @@ public class TimerService extends Service implements TimerServiceView {
 
     public void setProject(long id) {
         mCurrentProject = id;
+    }
+
+    //----------------VIEW IMPLEMENTATION----------------
+    @Override
+    public void setPreferences(Preferences preferences) {
+        mSessionManager = new TimerSessionManager(preferences);
+    }
+
+    @Override
+    public void finishedSessionSaved() {
+        nextSessionAndPost();
+    }
+
+    //----------------NOTIFICATION ACTIONS----------------
+    @Override
+    public void notificationStopClicked() {
+        stopTimer();
+    }
+
+    @Override
+    public void notificationStartClicked() {
+        startTimer();
+    }
+
+    @Override
+    public void notificationTakeClicked() {
+        startTimer();
+    }
+
+    @Override
+    public void notificationSkipClicked() {
+        nextSession();
+    }
+
+    private void playSound() {
+        mRingtone.play();
+    }
+
+    private void nextSessionAndPost() {
+        mSessionManager.nextSession();
+        postState(TimerState.STATE_READY);
+    }
+
+    private void postTime(long millis) {
+        mRxBus.send(new TimeUpdate(mSessionManager.getSession(), millis));
+    }
+
+    private void postState(int state) {
+        TimerState event = createStateInstance(state);
+        mRxBus.send(event);
+    }
+
+    private TimerState createStateInstance(int state) {
+        return new TimerState(state,
+                mSessionManager.getDuration(), mSessionManager.getSession());
+    }
+
+    private void dropTimer() {
+        postTime(0);
+        mTimer = null;
+        mIsTimerRunning = false;
     }
 }

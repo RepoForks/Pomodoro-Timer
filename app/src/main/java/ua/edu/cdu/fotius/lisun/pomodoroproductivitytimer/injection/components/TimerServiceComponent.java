@@ -18,21 +18,14 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components;
 
-import javax.inject.Singleton;
-
 import dagger.Component;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesKeys;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.ApplicationModule;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.TimerServiceModule;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.scopes.PerService;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseDialogFragment;
 
-@Singleton
-@Component(modules = ApplicationModule.class)
-public interface ApplicationComponent {
-    void inject(BaseDialogFragment fragment);
-    RxBus provideTimerValueBus();
-    PreferencesKeys providePreferencesKeys();
-    DataManager provideDataManager();
+@PerService
+@Component(modules = TimerServiceModule.class, dependencies = ApplicationComponent.class)
+public interface TimerServiceComponent {
+    void inject(TimerService service);
 }

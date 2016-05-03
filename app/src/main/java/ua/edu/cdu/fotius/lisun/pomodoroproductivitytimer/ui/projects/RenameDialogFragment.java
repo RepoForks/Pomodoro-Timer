@@ -27,6 +27,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -38,8 +39,9 @@ import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.BaseDialogFragment;
 
-public class RenameDialogFragment extends NameDialogFragment {
+public class RenameDialogFragment extends BaseDialogFragment {
 
     public static void showDialog(FragmentManager fragmentManager, long projectId,
                                   String title, String oldName, int listPosition) {
@@ -58,29 +60,29 @@ public class RenameDialogFragment extends NameDialogFragment {
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
 
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        EditText editText = new EditText(mContext);
+        EditText editText = (EditText) LayoutInflater.from(getContext())
+                .inflate(R.layout.dialog_edit_text, null);
         String initText = getArguments().getString(KEY_INIT_VALUE, "");
         editText.setText(initText);
         editText.setSelection(initText.length());
         long id = getArguments().getLong(KEY_ID);
         int position = getArguments().getInt(KEY_LIST_POSITION);
-        return new AlertDialog.Builder(mContext)
+        return new AlertDialog.Builder(getContext())
                 .setTitle(getArguments().getString(KEY_TITLE))
-                .setView(createWrapperLayout(editText))
-                .setPositiveButton(mContext.getString(R.string.dialog_positive_button), (dialog, which) ->
+                .setView(editText)
+                .setPositiveButton(getString(R.string.dialog_positive_button), (dialog, which) ->
                         sendResultAndClose(new Result(id, editText.getText().toString(), initText, position)))
-                .setNegativeButton(mContext.getString(R.string.dialog_negative_button),
+                .setNegativeButton(getString(R.string.dialog_negative_button),
                         (dialog, which) -> RenameDialogFragment.this.dismiss())
                 .create();
 
     }
 
     private void sendResultAndClose(Result result) {
-        mRxBus.send(result);
+        getRxBus().send(result);
         dismiss();
     }
 

@@ -16,25 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules;
 
-import java.util.concurrent.TimeUnit;
+import android.app.Service;
 
-public class Time {
-    private long mMinutes;
-    private long mSeconds;
+import dagger.Module;
+import dagger.Provides;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.TimerService;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services.notification.TimerNotificationManager;
 
-    public Time(long millis) {
-        mMinutes = TimeUnit.MILLISECONDS.toMinutes(millis);
-        mSeconds = TimeUnit.MILLISECONDS.toSeconds(millis) -
-                        TimeUnit.MINUTES.toSeconds(mMinutes);
+@Module
+public class TimerServiceModule {
+    private TimerService mService;
+
+    public TimerServiceModule(TimerService service) {
+        mService = service;
     }
 
-    public long getMinutes() {
-        return mMinutes;
+    @Provides
+    TimerNotificationManager.NotificationActions provideNotificationActions() {
+        return mService;
     }
 
-    public long getSeconds() {
-        return mSeconds;
+    @Provides
+    Service provideService() {
+        return mService;
     }
 }
