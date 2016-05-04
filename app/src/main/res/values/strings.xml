@@ -16,7 +16,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-    <string name="app_name">PomodoroProductivityTimer</string>
+    <string name="app_name">Pomodoro Timer</string>
 
     <!--Do not translate-->
     <string name="work_session_duration_key" translatable="false">work_session_duration</string>
@@ -37,7 +37,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="drawer_item_timer">Timer</string>
     <string name="drawer_item_projects">Projects</string>
-    <string name="drawer_item_statistics">Statistics</string>
+    <string name="drawer_item_statistics">Summary</string>
     <string name="drawer_item_settings">Settings</string>
 
     <!--Preferences-->
@@ -83,7 +83,8 @@
     <string name="notification_break_content">Take a break?</string>
     <string name="notification_break_take_action">Take</string>
     <string name="notification_break_skip_action">Skip</string>
-    <string name="notification_time_left">%1$d left</string>
+    <string name="notification_time_left_plural">%1$d minutes left</string>
+    <string name="notification_time_left_singular">%1$d minute left</string>
     <string name="notification_work_title">Work</string>
     <string name="notification_work_content">Time to work. Ready?</string>
     <string name="notification_start">Start</string>

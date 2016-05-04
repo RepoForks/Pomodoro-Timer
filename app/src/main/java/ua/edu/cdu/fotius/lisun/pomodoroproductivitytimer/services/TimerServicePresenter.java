@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
@@ -53,26 +54,14 @@ public class TimerServicePresenter extends MvpPresenter<TimerServiceView> {
         mLoadSubscription = mDataManager.getPreferences()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ShortenSubscriber<Preferences>() {
-                    @Override
-                    public void onNext(Preferences preferences) {
-                        getView().setPreferences(preferences);
-                    }
-                });
+                .subscribe(preferences -> getView().setPreferences(preferences));
     }
 
     public void saveFinishedSession(long projectId, long workedInMillis) {
         RxUtil.unsubscribe(mSaveSubscription);
-        // Do nothing onNext.
-        // Only for handling errors
         mSaveSubscription = mDataManager.saveFinishedSession(projectId, workedInMillis)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ShortenSubscriber<FinishedSession>() {
-                    @Override
-                    public void onNext(FinishedSession finishedSession) {
-                        getView().finishedSessionSaved();
-                    }
-                });
+                .subscribe(finishedSession -> getView().finishedSessionSaved());
     }
 }

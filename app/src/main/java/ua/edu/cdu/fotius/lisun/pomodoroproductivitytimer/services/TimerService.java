@@ -74,6 +74,7 @@ public class TimerService extends Service implements TimerServiceView, TimerNoti
     private long mCurrentProject = Project.NO_ID_VALUE;
     private TimerSessionManager mSessionManager;
     private Ringtone mRingtone;
+    private int mState;
 
     @Override
     public void onCreate() {
@@ -133,9 +134,7 @@ public class TimerService extends Service implements TimerServiceView, TimerNoti
         mIsTimerRunning = true;
         mNotificationManager.start(new TimeUpdate(mSessionManager.getSession(),
                 TimeUnit.MINUTES.toMillis(mSessionManager.getDuration())));
-
         startService(new Intent(getApplicationContext(), this.getClass()));
-
         postState(TimerState.STATE_STARTED);
     }
 
@@ -144,13 +143,13 @@ public class TimerService extends Service implements TimerServiceView, TimerNoti
             mTimer.cancel();
             dropTimer();
         }
+        postState(TimerState.STATE_READY);
         mNotificationManager.stop();
         stopSelf();
-        postState(TimerState.STATE_STOPPED);
     }
 
-    public TimerState getInitState() {
-        return createStateInstance(TimerState.STATE_READY);
+    public TimerState getState() {
+        return createStateInstance(mState);
     }
 
     public void nextSession() {
@@ -211,6 +210,7 @@ public class TimerService extends Service implements TimerServiceView, TimerNoti
     }
 
     private void postState(int state) {
+        mState = state;
         TimerState event = createStateInstance(state);
         mRxBus.send(event);
     }
@@ -221,7 +221,6 @@ public class TimerService extends Service implements TimerServiceView, TimerNoti
     }
 
     private void dropTimer() {
-        postTime(0);
         mTimer = null;
         mIsTimerRunning = false;
     }

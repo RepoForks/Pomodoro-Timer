@@ -42,6 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import rx.Subscription;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -168,9 +169,10 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
         mService = binder.getService();
         mTimeUpdateSubscription = binder.getTimeUpdateEvents().subscribe(this::showTime);
         mStateUpdateSubscription = binder.getStateUpdateEvents().subscribe(this::updateSession);
-        TimerState initState = mService.getInitState();
+        TimerState initState = mService.getState();
         showTime(initState.getDuration(), 0);
         showSessionName(initState.getSession());
+        updateSession(initState);
     }
 
     @Override
@@ -192,9 +194,6 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
             }
         } else  if (state == TimerState.STATE_STARTED) {
             mStartStopFab.setImageResource(R.drawable.ic_stop_timer_24dp);
-
-        } else if(state == TimerState.STATE_STOPPED) {
-            mStartStopFab.setImageResource(R.drawable.ic_start_timer_24dp);
         }
     }
 

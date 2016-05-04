@@ -21,7 +21,6 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.services;
 public class TimerState {
     public static final int STATE_READY = 0;
     public static final int STATE_STARTED = 1;
-    public static final int STATE_STOPPED = 2;
 
     private int mState;
     private int mDurationInMinutes;

@@ -33,6 +33,9 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import rx.Subscription;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxBus;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
@@ -54,7 +57,7 @@ public class TimerNotificationManager {
     }
 
     private final int NOTIFICATION_ID = 1;
-    private final int BROADCAST_REQUEST_CODE = 1;
+    private final int INTENT_REQUEST_CODE = 1;
 
     private RxBus mRxBus;
     private Subscription mTimerStateSubscription;
@@ -81,15 +84,15 @@ public class TimerNotificationManager {
     }
 
     private void setUpActions() {
-        mStopAction = PendingIntent.getBroadcast(mService, BROADCAST_REQUEST_CODE,
+        mStopAction = PendingIntent.getBroadcast(mService, INTENT_REQUEST_CODE,
                 new Intent(TimerNotificationReceiver.ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT);
-        mStartAction = PendingIntent.getBroadcast(mService, BROADCAST_REQUEST_CODE,
+        mStartAction = PendingIntent.getBroadcast(mService, INTENT_REQUEST_CODE,
                 new Intent(TimerNotificationReceiver.ACTION_START), PendingIntent.FLAG_UPDATE_CURRENT);
-        mTakeAction = PendingIntent.getBroadcast(mService, BROADCAST_REQUEST_CODE,
+        mTakeAction = PendingIntent.getBroadcast(mService, INTENT_REQUEST_CODE,
                 new Intent(TimerNotificationReceiver.ACTION_TAKE), PendingIntent.FLAG_UPDATE_CURRENT);
-        mSkipAction = PendingIntent.getBroadcast(mService, BROADCAST_REQUEST_CODE,
+        mSkipAction = PendingIntent.getBroadcast(mService, INTENT_REQUEST_CODE,
                 new Intent(TimerNotificationReceiver.ACTION_SKIP), PendingIntent.FLAG_UPDATE_CURRENT);
-        mContentAction = PendingIntent.getBroadcast(mService, BROADCAST_REQUEST_CODE,
+        mContentAction = PendingIntent.getActivity(mService, INTENT_REQUEST_CODE,
                 new Intent(mService, NavigationActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -126,8 +129,8 @@ public class TimerNotificationManager {
 
     private void subscribe() {
         mTimeUpdateSubscription = mRxBus.getObservable(TimeUpdate.class)
-                .filter(timeUpdate -> (timeUpdate.getMinutes() - mLastUpdateMinutes >= 1))
-                .subscribe(TimerNotificationManager.this::updateOngoingNotification);
+                .filter(timeUpdate -> (mLastUpdateMinutes - timeUpdate.getMinutes() >= 1))
+                .subscribe(this::updateOngoingNotification);
         mTimerStateSubscription = mRxBus.getObservable(TimerState.class)
                 .subscribe(this::updateState);
     }
@@ -162,12 +165,21 @@ public class TimerNotificationManager {
         }
         Notification notification = createCommonBuilder()
                 .setContentTitle(mService.getString(R.string.notification_title, mService.getString(titleId)))
-                .setContentText(mService.getString(R.string.notification_time_left, time.getMinutes()))
+                .setContentText(getTimeLeft(time.getMinutes()))
                 .addAction(R.drawable.ic_stop_timer_24dp, mService.getString(R.string.notification_stop), mStopAction)
                 .build();
         mNotificationManager.notify(NOTIFICATION_ID, notification);
         mLastUpdateMinutes = time.getMinutes();
         return notification;
+    }
+
+    private String getTimeLeft(long minutes) {
+        //time.getMinutes() + 1, because eg. 1 minute 23 seconds counts as "2 minutes left"
+        long timeLeft = minutes + 1;
+        String timeContent = (timeLeft == 1)
+                ? mService.getString(R.string.notification_time_left_singular, timeLeft)
+                : mService.getString(R.string.notification_time_left_singular, timeLeft);
+        return timeContent;
     }
 
     private void buildWorkReadyNotification() {
