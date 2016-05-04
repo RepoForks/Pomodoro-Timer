@@ -28,6 +28,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -120,6 +121,7 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsV
 
     @Override
     public void showNoStatistics() {
+        mAdapter.setStatistics(new ArrayList<>());
         makeSnack(getString(R.string.statistics_no_statistics));
     }
 
