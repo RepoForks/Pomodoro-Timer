@@ -20,7 +20,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:padding="@dimen/padding_medium" >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -57,11 +58,15 @@
             <Spinner
                 android:id="@+id/sp_projects"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:layout_marginBottom="@dimen/margin_medium"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:layout_marginBottom="@dimen/margin_medium" >
 
                 <ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RobotoTextView
                     android:id="@+id/tv_worked_today"

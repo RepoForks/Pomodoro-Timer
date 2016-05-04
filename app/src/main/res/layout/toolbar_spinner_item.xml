@@ -24,4 +24,7 @@
                  android:textColor="@android:color/black"
                  android:ellipsize="marquee"
                  android:gravity="center"
-                 style="@style/SpinnerDropDownItemStyle" />
+                 android:layout_height="@dimen/spinner_item_height"
+                 android:paddingRight="@dimen/spinner_item_padding_right"
+                 android:paddingLeft="@dimen/spinner_item_padding_left"
+                 android:paddingBottom="@dimen/spinner_item_padding_bottom"  />

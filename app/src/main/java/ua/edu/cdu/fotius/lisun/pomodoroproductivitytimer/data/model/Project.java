@@ -54,10 +54,6 @@ public class Project extends RealmObject {
         return creationDate;
     }
 
-    public String getCreationDateString() {
-        return creationDate.toString();
-    }
-
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }

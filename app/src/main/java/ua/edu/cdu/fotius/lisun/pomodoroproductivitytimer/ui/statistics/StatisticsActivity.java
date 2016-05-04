@@ -115,6 +115,15 @@ public class StatisticsActivity extends AppCompatActivity implements StatisticsV
 
     @Override
     public void showError(String error) {
-        Snackbar.make(mRootLayout, error, Snackbar.LENGTH_SHORT).show();
+        makeSnack(error);
+    }
+
+    @Override
+    public void showNoStatistics() {
+        makeSnack(getString(R.string.statistics_no_statistics));
+    }
+
+    private void makeSnack(String message) {
+        Snackbar.make(mRootLayout, message, Snackbar.LENGTH_LONG).show();
     }
 }

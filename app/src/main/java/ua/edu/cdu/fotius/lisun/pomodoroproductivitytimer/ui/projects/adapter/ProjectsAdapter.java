@@ -26,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,11 +46,14 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
 
     private List<Project> mProjects;
     private RxBus mRxBus;
+    private SimpleDateFormat mDateFormat;
 
     @Inject
     public ProjectsAdapter(RxBus rxBus) {
         mProjects = new ArrayList<>();
         mRxBus = rxBus;
+        //set default if nothing set with setter
+        mDateFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
     }
 
     @Override
@@ -62,7 +67,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mProjectName.setText(mProjects.get(position).getName());
-        holder.mCreationDate.setText(mProjects.get(position).getCreationDateString());
+        holder.mCreationDate.setText(mDateFormat.format(mProjects.get(position).getCreationDate()));
     }
 
     @Override
@@ -90,9 +95,8 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
         notifyItemRemoved(position);
     }
 
-    public void insertProject(Project project, int position) {
-        mProjects.add(position, project);
-        notifyItemInserted(position);
+    public void setDateFormatString(String format) {
+        mDateFormat = new SimpleDateFormat(format);
     }
 
     public Observable<MenuClickResult> getObserver() {

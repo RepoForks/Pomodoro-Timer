@@ -22,5 +22,8 @@
     android:id="@+id/tv_project"
     android:layout_width="match_parent"
     android:textAppearance="@android:style/TextAppearance.Large"
-    style="@style/SpinnerDropDownItemStyle"/>
+    android:layout_height="@dimen/spinner_item_height"
+    android:paddingRight="@dimen/spinner_item_padding_right"
+    android:paddingBottom="@dimen/spinner_item_padding_bottom"
+    android:singleLine="true" />
 

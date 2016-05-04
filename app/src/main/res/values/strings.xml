@@ -25,6 +25,8 @@
     <string name="long_break_interval_key" translatable="false">long_break_interval</string>
     <string name="time" translatable="false">%1$02d:%2$02d</string>
     <string name="percentage" translatable="false">%1$.1f%%</string>
+    <!--just set country(locale) specific format-->
+    <string name="date_formater_string" translatable="false">dd.MM.yyyy, HH:mm</string>
     <!--End of do not translate-->
 
     <!--Translate only "h" and "m" - hours and minutes-->
@@ -98,6 +100,7 @@
     <string name="timer_error_loading_projects">Error loading projects</string>
     <string name="preferences_error_loading">Error loading preferences</string>
     <string name="preferences_error_saving">Error saving preferences</string>
+    <string name="statistics_no_statistics">You have no statistics yet. Try to work at least one session</string>
 
     <string-array name="toolbar_spinner_values">
         <item>Today</item>

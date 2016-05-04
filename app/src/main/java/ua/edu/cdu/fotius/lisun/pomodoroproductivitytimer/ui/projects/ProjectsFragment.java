@@ -96,6 +96,7 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
         View v = inflater.inflate(R.layout.projects_fragment, container, false);
         RecyclerView recyclerView = findById(v, R.id.rv_projects);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mProjectsAdapter.setDateFormatString(getString(R.string.date_formater_string));
         recyclerView.setAdapter(mProjectsAdapter);
         ButterKnife.bind(this, v);
         mPresenter.getProjects(getString(R.string.projects_error_loading));

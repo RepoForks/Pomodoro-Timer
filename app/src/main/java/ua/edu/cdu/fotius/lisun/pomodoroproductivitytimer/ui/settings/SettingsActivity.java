@@ -32,7 +32,6 @@ public class SettingsActivity extends FragmentActivity {
             setFragment(new SettingsFragment(), SettingsFragment.FRAGMENT_TAG);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         mToolbar.setNavigationOnClickListener(v -> finish());
     }
 

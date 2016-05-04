@@ -64,7 +64,11 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
 
                     @Override
                     public void onNext(List<ProjectStatistics> stats) {
-                        getView().showStatistics(stats);
+                        if(stats.size() == 0) {
+                            getView().showNoStatistics();
+                        } else {
+                            getView().showStatistics(stats);
+                        }
                     }
                 });
     }
