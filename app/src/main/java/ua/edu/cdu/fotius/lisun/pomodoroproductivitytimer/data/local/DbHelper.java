@@ -238,9 +238,6 @@ public class DbHelper {
                         return false;
                     }
                 })
-                .registerTypeAdapter(Project.class, new ProjectSerializer())
-                .registerTypeAdapter(FinishedSession.class,
-                        new FinishedSessionSerializer())
                 .create();
 
         String json = gson.toJson(projects);
