@@ -18,6 +18,11 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,11 +30,15 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.realm.FinishedSessionRealmProxy;
+import io.realm.ProjectRealmProxy;
 import io.realm.Realm;
-import io.realm.RealmQuery;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import timber.log.Timber;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.json.FinishedSessionSerializer;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.json.ProjectSerializer;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.MathUtil;
@@ -209,5 +218,38 @@ public class DbHelper {
         sessions = realm.copyFromRealm(sessions);
         realm.close();
         return sessions;
+    }
+
+    public void saveDbSnapshot() throws ClassNotFoundException {
+        Realm realm = Realm.getDefaultInstance();
+
+        List<Project> projects = realm.where(Project.class).findAll();
+        projects = realm.copyFromRealm(projects);
+
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .registerTypeAdapter(Project.class, new ProjectSerializer())
+                .registerTypeAdapter(FinishedSession.class,
+                        new FinishedSessionSerializer())
+                .create();
+
+        String json = gson.toJson(projects);
+        Timber.i("DbHelper#saveDbSnapshot. JSON: %s", json);
+
+        List<FinishedSession> sessions = realm.where(FinishedSession.class).findAll();
+        sessions = realm.copyFromRealm(sessions);
+        String finishedJson = gson.toJson(sessions);
+        Timber.i("DbHelper#saveDbSnapshot. SESSIONS: %s", finishedJson);
+        realm.close();
     }
 }

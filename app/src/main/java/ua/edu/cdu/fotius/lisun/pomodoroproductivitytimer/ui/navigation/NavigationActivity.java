@@ -28,6 +28,7 @@ import android.view.MenuItem;
 
 import butterknife.Bind;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.backup.BackupActivity;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.FragmentActivity;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.ProjectsFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.settings.SettingsActivity;
@@ -87,6 +88,9 @@ public class NavigationActivity extends FragmentActivity implements
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_backup) {
+            Intent intent = new Intent(this, BackupActivity.class);
             startActivity(intent);
         }
         mDrawer.closeDrawer(GravityCompat.START);

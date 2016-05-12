@@ -18,6 +18,8 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -32,6 +34,7 @@ public class Project extends RealmObject {
     @PrimaryKey
     private long id = NO_ID_VALUE;
     private String name;
+    @SerializedName("creation_date")
     private Date creationDate;
 
     public long getId() {

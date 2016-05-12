@@ -18,6 +18,8 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -31,6 +33,7 @@ public class FinishedSession extends RealmObject{
     @Index
     private long projectId;
     private Date timestamp;
+    @SerializedName("worked_time")
     private long workedTimeInMillis;
 
     public long getId() {

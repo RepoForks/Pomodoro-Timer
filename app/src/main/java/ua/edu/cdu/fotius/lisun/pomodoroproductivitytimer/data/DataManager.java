@@ -20,6 +20,7 @@ package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -82,6 +83,21 @@ public class DataManager {
     }
 
     public Observable<List<ProjectStatistics>> getStatistics(Date from, Date to) {
-        return Observable.fromCallable(() -> mDbHelper.statistics(from, to));
+        return Observable.fromCallable(new Callable<List<ProjectStatistics>>() {
+            @Override
+            public List<ProjectStatistics> call() throws Exception {
+                return mDbHelper.statistics(from, to);
+            }
+        });
+    }
+
+    public Observable saveDbSnapshot() {
+        return Observable.fromCallable(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                mDbHelper.saveDbSnapshot();
+                return null;
+            }
+        });
     }
 }

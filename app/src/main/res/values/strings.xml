@@ -101,6 +101,7 @@
     <string name="preferences_error_loading">Error loading preferences</string>
     <string name="preferences_error_saving">Error saving preferences</string>
     <string name="statistics_no_statistics">You have no statistics yet. Try to work at least one session</string>
+    <string name="drawer_item_backup">Backup</string>
 
     <string-array name="toolbar_spinner_values">
         <item>Today</item>
