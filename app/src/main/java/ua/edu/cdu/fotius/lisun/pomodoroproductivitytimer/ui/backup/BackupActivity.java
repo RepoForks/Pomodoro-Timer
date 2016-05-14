@@ -18,34 +18,107 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.backup;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+
+import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.DbHelper;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Backup;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerBackupActivityComponent;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components.DaggerStatisticsActivityComponent;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.StatisticsActivityModule;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.statistics.StatisticsPresenter;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.BackupActivityModule;
 
-public class BackupActivity extends AppCompatActivity {
+import static butterknife.ButterKnife.findById;
+
+public class BackupActivity extends AppCompatActivity implements BackupView, BackupAdapter.MenuItemClickListener{
 
     @Inject
     BackupPresenter mPresenter;
+    @Inject
+    BackupAdapter mAdapter;
+    @Bind(R.id.backup_root_layout)
+    CoordinatorLayout mRootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_backup);
+        setContentView(R.layout.backup_activity);
+
+        Toolbar toolbar = findById(this, R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ButterKnife.bind(this);
 
         DaggerBackupActivityComponent.builder()
+                .backupActivityModule(new BackupActivityModule(this))
                 .applicationComponent(PomodoroProductivityTimerApplication.get(this).getApplicationComponent())
                 .build().inject(this);
 
-        //TODO: DEBUG!!!
-        mPresenter.saveDbSnapshot();
+
+        RecyclerView recyclerView = findById(this, R.id.rv_backups);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(mAdapter);
+
+        mPresenter.attach(this);
+        mPresenter.loadBackups(getString(R.string.backup_error_loading));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.detach();
+    }
+
+    @OnClick(R.id.btn_create_backup)
+    public void createBackupClicked() {
+        mPresenter.createBackup(getFilesDir(), getString(R.string.backup_error_creating));
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        showSnack(errorMessage);
+    }
+
+    @Override
+    public void showNoBackups() {
+        showSnack(getString(R.string.backup_no_backups));
+    }
+
+    @Override
+    public void showBackups(List<Backup> backups) {
+        mAdapter.setBackups(backups);
+    }
+
+    @Override
+    public void showCreatedBackup(Backup backup) {
+        mAdapter.addBackup(backup);
+        showSnack(getString(R.string.backup_new_created));
+    }
+
+    private void showSnack(String message) {
+        Snackbar.make(mRootLayout, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRestoreClicked(Backup backup) {
+        Timber.i("BackupActivity#onRestoreClicked.");
+    }
+
+    @Override
+    public void onToDriveClicked(Backup backup) {
+        Timber.i("BackupActivity#onToDriveClicked.");
     }
 }

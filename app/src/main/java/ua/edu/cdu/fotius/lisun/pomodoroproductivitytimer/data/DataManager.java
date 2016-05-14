@@ -18,6 +18,7 @@
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data;
 
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -28,6 +29,7 @@ import javax.inject.Singleton;
 import rx.Observable;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.DbHelper;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local.PreferencesHelper;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Backup;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.PreferencePair;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.Preferences;
@@ -83,21 +85,18 @@ public class DataManager {
     }
 
     public Observable<List<ProjectStatistics>> getStatistics(Date from, Date to) {
-        return Observable.fromCallable(new Callable<List<ProjectStatistics>>() {
-            @Override
-            public List<ProjectStatistics> call() throws Exception {
-                return mDbHelper.statistics(from, to);
-            }
-        });
+        return Observable.fromCallable(() -> mDbHelper.statistics(from, to));
     }
 
-    public Observable saveDbSnapshot() {
-        return Observable.fromCallable(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                mDbHelper.saveDbSnapshot();
-                return null;
-            }
-        });
+    public Observable<List<Backup>> getBackups() {
+        return Observable.fromCallable(() -> mDbHelper.backups());
+    }
+
+    public Observable<Backup> createBackup(File rootDir) {
+        return Observable.fromCallable(() -> mDbHelper.backup(rootDir));
+    }
+
+    public Observable<Backup> restoreBackup(Backup backup) {
+        return Observable.fromCallable(() -> mDbHelper.restore(backup));
     }
 }

@@ -19,13 +19,14 @@
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.components;
 
 import dagger.Component;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules.BackupActivityModule;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.scopes.PerActivity;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.scopes.PerFragment;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.backup.BackupActivity;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.projects.ProjectsFragment;
 
 @PerActivity
-@Component(dependencies = ApplicationComponent.class)
+@Component(modules = BackupActivityModule.class, dependencies = ApplicationComponent.class)
 public interface BackupActivityComponent {
     void inject(BackupActivity activity);
 }

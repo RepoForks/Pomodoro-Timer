@@ -18,11 +18,12 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import android.content.Context;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,19 +31,17 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.realm.FinishedSessionRealmProxy;
-import io.realm.ProjectRealmProxy;
 import io.realm.Realm;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import timber.log.Timber;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.json.FinishedSessionSerializer;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.json.ProjectSerializer;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Backup;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.FinishedSession;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.MathUtil;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ProjectStatistics;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RealmJsonSerializer;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.StorageUtil;
 
 @Singleton
 public class DbHelper {
@@ -80,7 +79,9 @@ public class DbHelper {
 
     private long generateId(Realm realm, Class clazz) {
         Number id = realm.where(clazz).max(DbAttributes.ID);
+        Timber.i("DbHelper#generateId. ID = " + id);
         long nextId = (id == null) ? 1 : id.longValue() + 1;
+        Timber.i("DbHelper#generateId. NEXT ID = " + nextId);
         return nextId;
     }
 
@@ -220,33 +221,57 @@ public class DbHelper {
         return sessions;
     }
 
-    public void saveDbSnapshot() throws ClassNotFoundException {
+    public List<Backup> backups() {
         Realm realm = Realm.getDefaultInstance();
+        List<Backup> backups = realm.where(Backup.class).findAll();
+        backups = realm.copyFromRealm(backups);
+        return backups;
+    }
 
-        List<Project> projects = realm.where(Project.class).findAll();
-        projects = realm.copyFromRealm(projects);
-
-        Gson gson = new GsonBuilder()
-                .setExclusionStrategies(new ExclusionStrategy() {
-                    @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        return f.getDeclaringClass().equals(RealmObject.class);
-                    }
-
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false;
-                    }
-                })
-                .create();
-
-        String json = gson.toJson(projects);
-        Timber.i("DbHelper#saveDbSnapshot. JSON: %s", json);
-
-        List<FinishedSession> sessions = realm.where(FinishedSession.class).findAll();
-        sessions = realm.copyFromRealm(sessions);
-        String finishedJson = gson.toJson(sessions);
-        Timber.i("DbHelper#saveDbSnapshot. SESSIONS: %s", finishedJson);
+    public synchronized Backup backup(File rootDir) {
+        Date creationDate = new Date();
+        String fileNameSuffix = creationDate.toString().replaceAll("\\s+","_").replaceAll(":", "_");
+        Realm realm = Realm.getDefaultInstance();
+        Backup existedBackup = realm.where(Backup.class).equalTo(DbAttributes.BACKUP_NAME, fileNameSuffix).findFirst();
+        if(existedBackup != null) return null;
+        File projectsFile = new File(rootDir, "proj_" + fileNameSuffix);
+        File sessionsFile = new File(rootDir, "ses_" + fileNameSuffix);
+        RealmJsonSerializer serializer = new RealmJsonSerializer();
+        StorageUtil.saveToFile(projectsFile, serializer.toJson(Project.class));
+        StorageUtil.saveToFile(sessionsFile, serializer.toJson(FinishedSession.class));
+        realm.beginTransaction();
+        Backup backup = new Backup();
+        backup.setBackupName(fileNameSuffix);
+        backup.setCreationDate(creationDate);
+        backup.setProjectsBackupPath(projectsFile.toString());
+        backup.setSessionsBackupPath(sessionsFile.toString());
+        long projectsQuantity = realm.where(Project.class).count();
+        backup.setProjectsQuantity(projectsQuantity);
+        int sessionQuantity = realm.where(FinishedSession.class).sum(DbAttributes.SESSION_WORKED).intValue();
+        backup.setTotalWorked(sessionQuantity);
+        realm.copyToRealmOrUpdate(backup);
+        realm.commitTransaction();
         realm.close();
+        return backup;
+    }
+
+    public Backup restore(Backup backup) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.clear(Project.class);
+        realm.clear(FinishedSession.class);
+
+        File projectFullPath = new File(backup.getProjectsBackupPath());
+        File sessionFullPath = new File(backup.getSessionsBackupPath());
+        String json = StorageUtil.readFromFile(projectFullPath);
+        Timber.i("DbHelper#restore. PROJECT FROM FILE: " + json);
+        realm.createAllFromJson(Project.class, json);
+        json = StorageUtil.readFromFile(sessionFullPath);
+        Timber.i("DbHelper#restore. SESSIONS FROM FILE: " + json);
+        realm.createAllFromJson(FinishedSession.class, json);
+        realm.commitTransaction();
+
+        realm.close();
+        return backup;
     }
 }

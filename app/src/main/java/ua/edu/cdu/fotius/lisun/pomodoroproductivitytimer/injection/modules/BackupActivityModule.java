@@ -16,16 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.backup;
+package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.injection.modules;
 
-import java.util.List;
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Backup;
-import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpView;
+import dagger.Module;
+import dagger.Provides;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.backup.BackupAdapter;
 
-public interface BackupView extends MvpView {
-    void showError(String errorMessage);
-    void showNoBackups();
-    void showBackups(List<Backup> backups);
-    void showCreatedBackup(Backup backup);
+@Module
+public class BackupActivityModule {
+
+    private Context mContext;
+
+    public BackupActivityModule(Context context) {
+        mContext = context;
+    }
+
+    @Provides
+    BackupAdapter.MenuItemClickListener provideMenuItemClickListener() {
+        return (BackupAdapter.MenuItemClickListener) mContext;
+    }
 }

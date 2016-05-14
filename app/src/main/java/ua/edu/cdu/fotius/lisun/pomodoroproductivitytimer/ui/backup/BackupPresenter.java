@@ -18,38 +18,80 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.backup;
 
+import java.io.File;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import rx.Scheduler;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.DataManager;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Backup;
+import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.RxUtil;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.helpers.ShortenSubscriber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.ui.base.MvpPresenter;
 
 public class BackupPresenter extends MvpPresenter<BackupView> {
 
     private final DataManager mDataManager;
+    private Subscription mLoadSubscription;
+    private Subscription mCreateSubscription;
 
     @Inject
     public BackupPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
 
-    public void saveDbSnapshot() {
-        mDataManager.saveDbSnapshot()
+    @Override
+    public void detach() {
+        super.detach();
+        RxUtil.unsubscribe(mLoadSubscription);
+        RxUtil.unsubscribe(mCreateSubscription);
+    }
+
+    public void loadBackups(String errorMessage) {
+        RxUtil.unsubscribe(mLoadSubscription);
+        mLoadSubscription = mDataManager.getBackups()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ShortenSubscriber() {
+                .subscribe(new ShortenSubscriber<List<Backup>>() {
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e, "");
+                        getView().showError(errorMessage);
                     }
 
                     @Override
-                    public void onNext(Object o) {
-                        Timber.i("BackupPresenter#onNext.");
+                    public void onNext(List<Backup> backups) {
+                        if(backups.size() > 0) {
+                            getView().showBackups(backups);
+                        } else {
+                            getView().showNoBackups();
+                        }
+                    }
+                });
+    }
+
+    public void createBackup(File rootDir, String errorMessage) {
+        RxUtil.unsubscribe(mCreateSubscription);
+        mCreateSubscription = mDataManager.createBackup(rootDir)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<Backup>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "");
+                        getView().showError(errorMessage);
+                    }
+
+                    @Override
+                    public void onNext(Backup backup) {
+                        if(backup != null) {
+                            getView().showCreatedBackup(backup);
+                        }
                     }
                 });
     }

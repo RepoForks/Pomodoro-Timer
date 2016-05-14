@@ -29,7 +29,7 @@ public class StatisticsActivityModule {
 
     private Context mContext;
 
-    public StatisticsActivityModule(AppCompatActivity context) {
+    public StatisticsActivityModule(Context context) {
         mContext = context;
     }
 

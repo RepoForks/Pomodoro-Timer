@@ -102,6 +102,13 @@
     <string name="preferences_error_saving">Error saving preferences</string>
     <string name="statistics_no_statistics">You have no statistics yet. Try to work at least one session</string>
     <string name="drawer_item_backup">Backup</string>
+    <string name="backup_btn_backup">Backup</string>
+    <string name="backup_error_loading">Error occurred while loading backups</string>
+    <string name="backup_no_backups">You have no backups. Try to create them</string>
+    <string name="backup_new_created">New backup successfully created</string>
+    <string name="backup_error_creating">Error creating backup file. Please, try again</string>
+    <string name="menu_backup_overflow_restore">Restore</string>
+    <string name="menu_backup_overflow_to_drive">To Google Drive</string>
 
     <string-array name="toolbar_spinner_values">
         <item>Today</item>

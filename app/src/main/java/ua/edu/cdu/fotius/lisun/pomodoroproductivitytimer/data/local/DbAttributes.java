@@ -24,4 +24,5 @@ public interface DbAttributes {
     String SESSION_TIMESTAMP = "timestamp";
     String SESSION_WORKED = "workedTimeInMillis";
     String SESSION_PROJECT_ID = "projectId";
+    String BACKUP_NAME = "backupName";
 }
