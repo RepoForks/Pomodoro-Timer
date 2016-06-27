@@ -28,4 +28,5 @@ public interface BackupView extends MvpView {
     void showNoBackups();
     void showBackups(List<Backup> backups);
     void showCreatedBackup(Backup backup);
+    void showBackupRestored(Backup backup);
 }

@@ -46,7 +46,6 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.ViewHolder
 
     public interface MenuItemClickListener {
         void onRestoreClicked(Backup backup);
-        void onToDriveClicked(Backup backup);
     }
 
     private List<Backup> mBackups;
@@ -109,8 +108,6 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.ViewHolder
             Backup backup = mBackups.get(position);
             if(item.getItemId() == R.id.mbo_restore) {
                 mMenuItemClickListener.onRestoreClicked(backup);
-            } else if(item.getItemId() == R.id.mbo_to_drive) {
-                mMenuItemClickListener.onToDriveClicked(backup);
             }
             return true;
         }

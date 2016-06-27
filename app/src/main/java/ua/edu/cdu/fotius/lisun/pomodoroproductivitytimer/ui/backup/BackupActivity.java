@@ -26,7 +26,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -59,6 +58,8 @@ public class BackupActivity extends AppCompatActivity implements BackupView, Bac
 
         Toolbar toolbar = findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         ButterKnife.bind(this);
 
@@ -108,6 +109,11 @@ public class BackupActivity extends AppCompatActivity implements BackupView, Bac
         showSnack(getString(R.string.backup_new_created));
     }
 
+    @Override
+    public void showBackupRestored(Backup backup) {
+        showSnack(getString(R.string.backup_restored));
+    }
+
     private void showSnack(String message) {
         Snackbar.make(mRootLayout, message, Snackbar.LENGTH_SHORT).show();
     }
@@ -115,10 +121,6 @@ public class BackupActivity extends AppCompatActivity implements BackupView, Bac
     @Override
     public void onRestoreClicked(Backup backup) {
         Timber.i("BackupActivity#onRestoreClicked.");
-    }
-
-    @Override
-    public void onToDriveClicked(Backup backup) {
-        Timber.i("BackupActivity#onToDriveClicked.");
+        mPresenter.restoreBackup(backup, getString(R.string.backup_error_restoring));
     }
 }

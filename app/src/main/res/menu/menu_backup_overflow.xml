@@ -25,9 +25,4 @@
         android:title="@string/menu_backup_overflow_restore"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/mbo_to_drive"
-        android:title="@string/menu_backup_overflow_to_drive"
-        app:showAsAction="always" />
-
 </menu>

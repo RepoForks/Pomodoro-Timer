@@ -34,8 +34,7 @@ public class Project extends RealmObject {
     @PrimaryKey
     private long id = NO_ID_VALUE;
     private String name;
-    @SerializedName("creation_date")
-    private Date creationDate;
+    private long creationDate;
 
     public long getId() {
         return id;
@@ -53,11 +52,11 @@ public class Project extends RealmObject {
         this.name = name;
     }
 
-    public Date getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 }

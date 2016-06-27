@@ -53,4 +53,5 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
     compile "io.reactivex:rxandroid:${rxVersion}"
     compile "io.reactivex:rxjava:${rxVersion}"
+    compile 'com.scand:realm-browser:0.1.13'
 }

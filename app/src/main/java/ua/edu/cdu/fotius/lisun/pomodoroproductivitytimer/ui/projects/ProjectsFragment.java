@@ -29,6 +29,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.scand.realmbrowser.RealmBrowser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,9 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
 import rx.Subscription;
+import timber.log.Timber;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.PomodoroProductivityTimerApplication;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.R;
 import ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.model.Project;
@@ -99,7 +103,11 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
         mProjectsAdapter.setDateFormatString(getString(R.string.date_formater_string));
         recyclerView.setAdapter(mProjectsAdapter);
         ButterKnife.bind(this, v);
-        mPresenter.getProjects(getString(R.string.projects_error_loading));
+//        Realm realm = Realm.getDefaultInstance();
+//
+//        new RealmBrowser.Builder(getContext())
+//                .add(realm, Project.class)
+//                .show();
         return v;
     }
 
@@ -132,7 +140,15 @@ public class ProjectsFragment extends BaseFragment implements ProjectsView {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Timber.i("ProjectsFragment#onResume.");
+        mPresenter.getProjects(getString(R.string.projects_error_loading));
+    }
+
+    @Override
     public void showProjects(List<Project> projects) {
+        Timber.i("ProjectsFragment#showProjects. Size: " + projects.size());
         mProjectsAdapter.setProjects(projects);
     }
 

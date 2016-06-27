@@ -84,6 +84,7 @@ public class TimerPresenter extends MvpPresenter<TimerView> {
                 .subscribe(new ShortenSubscriber<Integer>() {
                     @Override
                     public void onError(Throwable e) {
+                        Timber.e(e, "");
                         getView().showError(errorMessage);
                     }
 

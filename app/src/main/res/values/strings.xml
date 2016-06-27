@@ -109,6 +109,8 @@
     <string name="backup_error_creating">Error creating backup file. Please, try again</string>
     <string name="menu_backup_overflow_restore">Restore</string>
     <string name="menu_backup_overflow_to_drive">To Google Drive</string>
+    <string name="backup_restored">Backup successfully restored</string>
+    <string name="backup_error_restoring">Error restoring backup</string>
 
     <string-array name="toolbar_spinner_values">
         <item>Today</item>

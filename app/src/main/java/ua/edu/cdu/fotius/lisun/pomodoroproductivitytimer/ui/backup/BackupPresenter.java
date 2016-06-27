@@ -40,6 +40,7 @@ public class BackupPresenter extends MvpPresenter<BackupView> {
     private final DataManager mDataManager;
     private Subscription mLoadSubscription;
     private Subscription mCreateSubscription;
+    private Subscription mRestoreSubscription;
 
     @Inject
     public BackupPresenter(DataManager dataManager) {
@@ -66,7 +67,7 @@ public class BackupPresenter extends MvpPresenter<BackupView> {
 
                     @Override
                     public void onNext(List<Backup> backups) {
-                        if(backups.size() > 0) {
+                        if (backups.size() > 0) {
                             getView().showBackups(backups);
                         } else {
                             getView().showNoBackups();
@@ -89,9 +90,28 @@ public class BackupPresenter extends MvpPresenter<BackupView> {
 
                     @Override
                     public void onNext(Backup backup) {
-                        if(backup != null) {
+                        if (backup != null) {
                             getView().showCreatedBackup(backup);
                         }
+                    }
+                });
+    }
+
+    public void restoreBackup(Backup backup, String errorMessage) {
+        RxUtil.unsubscribe(mRestoreSubscription);
+        mRestoreSubscription = mDataManager.restoreBackup(backup)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ShortenSubscriber<Backup>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "");
+                        getView().showError(errorMessage);
+                    }
+
+                    @Override
+                    public void onNext(Backup backup) {
+                        getView().showBackupRestored(backup);
                     }
                 });
     }

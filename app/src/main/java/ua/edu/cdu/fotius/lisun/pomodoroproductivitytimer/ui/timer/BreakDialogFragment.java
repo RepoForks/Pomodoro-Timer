@@ -53,7 +53,10 @@ public class BreakDialogFragment extends BaseDialogFragment {
                     BreakDialogFragment.this.dismiss();
                 })
                 .setNegativeButton(getString(R.string.break_dialog_skip),
-                        (dialog, which) -> BreakDialogFragment.this.dismiss())
+                        (dialog, which) -> {
+                            getRxBus().send(new Result(Result.SKIP));
+                            BreakDialogFragment.this.dismiss();
+                        })
                 .create();
     }
 

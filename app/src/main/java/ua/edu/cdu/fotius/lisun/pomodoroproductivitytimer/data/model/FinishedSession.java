@@ -32,8 +32,7 @@ public class FinishedSession extends RealmObject{
     private long id;
     @Index
     private long projectId;
-    private Date timestamp;
-    @SerializedName("worked_time")
+    private long timestamp;
     private long workedTimeInMillis;
 
     public long getId() {
@@ -52,11 +51,11 @@ public class FinishedSession extends RealmObject{
         this.projectId = projectId;
     }
 
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

@@ -131,6 +131,7 @@ public class TimerFragment extends BaseFragment implements TimerView, ServiceCon
                     if (result.getResultCode() == BreakDialogFragment.Result.TAKE) {
                         mService.startTimer();
                     } else if (result.getResultCode() == BreakDialogFragment.Result.SKIP) {
+                        Timber.i("TimerFragment#onStart. SKIP");
                         mService.nextSession();
                     }
                 });

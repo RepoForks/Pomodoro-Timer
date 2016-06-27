@@ -29,6 +29,7 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -67,7 +68,8 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mProjectName.setText(mProjects.get(position).getName());
-        holder.mCreationDate.setText(mDateFormat.format(mProjects.get(position).getCreationDate()));
+        Date date = new Date(mProjects.get(position).getCreationDate());
+        holder.mCreationDate.setText(mDateFormat.format(date));
     }
 
     @Override

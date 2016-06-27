@@ -29,7 +29,7 @@ public class Backup extends RealmObject {
     private String backupName;
     private String projectsBackupPath;
     private String sessionsBackupPath;
-    private Date creationDate;
+    private long creationDate;
     private long projectsQuantity;
     private int totalWorked;
 
@@ -57,11 +57,11 @@ public class Backup extends RealmObject {
         this.sessionsBackupPath = sessionsBackupPath;
     }
 
-    public Date getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 

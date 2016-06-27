@@ -18,12 +18,7 @@
 
 package ua.edu.cdu.fotius.lisun.pomodoroproductivitytimer.data.local;
 
-import android.content.Context;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import timber.log.Timber;
@@ -73,7 +69,7 @@ public class DbHelper {
         Project project = new Project();
         project.setId(generateId(realm, Project.class));
         project.setName(name);
-        project.setCreationDate(new Date());
+        project.setCreationDate(new Date().getTime());
         return project;
     }
 
@@ -99,6 +95,7 @@ public class DbHelper {
     }
 
     public Project deleteProject(long id) {
+        Timber.i("DbHelper#deleteProject. ID: " + id);
         Realm realm = Realm.getDefaultInstance();
         Project project = realm.where(Project.class)
                 .equalTo(DbAttributes.ID, id)
@@ -126,6 +123,7 @@ public class DbHelper {
         List<Project> projects = realm.where(Project.class)
                 .findAllSorted(DbAttributes.PROJECT_NAME, Sort.ASCENDING);
         projects = realm.copyFromRealm(projects);
+        Timber.i("DbHelper#projects. SIZE: " + projects.size());
         realm.close();
         return projects;
     }
@@ -136,7 +134,7 @@ public class DbHelper {
         session.setId(generateId(realm, FinishedSession.class));
         projectId = (project(realm, projectId) == null) ? Project.NO_ID_VALUE : projectId;
         session.setProjectId(projectId);
-        session.setTimestamp(new Date());
+        session.setTimestamp(new Date().getTime());
         session.setWorkedTimeInMillis(workedInMillis);
         realm.beginTransaction();
         realm.copyToRealm(session);
@@ -178,13 +176,13 @@ public class DbHelper {
 
     private long totalWorked(Realm realm, Date from, Date to) {
         return realm.where(FinishedSession.class)
-                .between(DbAttributes.SESSION_TIMESTAMP, from, to)
+                .between(DbAttributes.SESSION_TIMESTAMP, from.getTime(), to.getTime())
                 .sum(DbAttributes.SESSION_WORKED).longValue();
     }
 
     private long totalProjectWorked(Realm realm, Date from, Date to, long id) {
         return realm.where(FinishedSession.class)
-                .between(DbAttributes.SESSION_TIMESTAMP, from, to)
+                .between(DbAttributes.SESSION_TIMESTAMP, from.getTime(), to.getTime())
                 .equalTo(DbAttributes.SESSION_PROJECT_ID, id)
                 .sum(DbAttributes.SESSION_WORKED)
                 .longValue();
@@ -192,7 +190,7 @@ public class DbHelper {
 
     private List<FinishedSession> distinctFinishedSessions(Realm realm, Date from, Date to) {
         List<FinishedSession> sessions = realm.where(FinishedSession.class)
-                .between(DbAttributes.SESSION_TIMESTAMP, from, to)
+                .between(DbAttributes.SESSION_TIMESTAMP, from.getTime(), to.getTime())
                 .distinct(DbAttributes.SESSION_PROJECT_ID);
         return realm.copyFromRealm(sessions);
     }
@@ -214,7 +212,7 @@ public class DbHelper {
     public List<FinishedSession> finishedSessions(Date from, Date to) {
         Realm realm = Realm.getDefaultInstance();
         List<FinishedSession> sessions = realm.where(FinishedSession.class)
-                .between(DbAttributes.SESSION_TIMESTAMP, from, to)
+                .between(DbAttributes.SESSION_TIMESTAMP, from.getTime(), to.getTime())
                 .findAll();
         sessions = realm.copyFromRealm(sessions);
         realm.close();
@@ -225,6 +223,7 @@ public class DbHelper {
         Realm realm = Realm.getDefaultInstance();
         List<Backup> backups = realm.where(Backup.class).findAll();
         backups = realm.copyFromRealm(backups);
+        realm.close();
         return backups;
     }
 
@@ -242,7 +241,7 @@ public class DbHelper {
         realm.beginTransaction();
         Backup backup = new Backup();
         backup.setBackupName(fileNameSuffix);
-        backup.setCreationDate(creationDate);
+        backup.setCreationDate(creationDate.getTime());
         backup.setProjectsBackupPath(projectsFile.toString());
         backup.setSessionsBackupPath(sessionsFile.toString());
         long projectsQuantity = realm.where(Project.class).count();
@@ -260,7 +259,6 @@ public class DbHelper {
         realm.beginTransaction();
         realm.clear(Project.class);
         realm.clear(FinishedSession.class);
-
         File projectFullPath = new File(backup.getProjectsBackupPath());
         File sessionFullPath = new File(backup.getSessionsBackupPath());
         String json = StorageUtil.readFromFile(projectFullPath);
@@ -270,7 +268,6 @@ public class DbHelper {
         Timber.i("DbHelper#restore. SESSIONS FROM FILE: " + json);
         realm.createAllFromJson(FinishedSession.class, json);
         realm.commitTransaction();
-
         realm.close();
         return backup;
     }

@@ -97,6 +97,7 @@ public class ProjectsPresenter extends MvpPresenter<ProjectsView> {
                 .subscribe(new ShortenSubscriber<Project>() {
                     @Override
                     public void onError(Throwable e) {
+                        Timber.e(e, "");
                         getView().showError(error);
                     }
 
