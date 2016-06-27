@@ -3,9 +3,9 @@ This app helps to use Pomodoro technique to organize work process. The Pomodoro 
 
 What was used for this project?
 
+# Used technologies and libraries 
 Architecture pattern: MVP
-
-Used technologies and libraries:
+Used libraries:
 - Dagger 2;
 - rxJava/rxAndroid;
 - Realm;
