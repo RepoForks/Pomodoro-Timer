@@ -4,7 +4,8 @@ This app helps to use Pomodoro technique to organize work process. The Pomodoro 
 What was used for this project?
 
 # Used technologies and libraries 
-Architecture pattern: MVP
+Architecture pattern: MVP.
+
 Used libraries:
 - Dagger 2;
 - rxJava/rxAndroid;
@@ -12,7 +13,7 @@ Used libraries:
 - ButterKnife;
 - Timber.
 
-Screenshots:
+# Screenshots:
 
 ![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/main.png)
 
