@@ -15,7 +15,7 @@ Used libraries:
 License
 =======
 
-    Copyright 2012 Lisun Andrei
+    Copyright 2016 Lisun Andrei
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
