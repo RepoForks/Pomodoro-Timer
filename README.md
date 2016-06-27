@@ -11,3 +11,15 @@ Used technologies and libraries:
 - Realm;
 - ButterKnife;
 - Timber.
+
+Screenshots:
+
+![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/main.png)
+
+![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/projects.png)
+
+![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/settings.png)
+
+![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/stats.png)
+
+![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/notification.png)
