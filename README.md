@@ -3,7 +3,6 @@ This app helps to use Pomodoro technique to organize work process. The Pomodoro 
 
 ![Alt text](/screenshots/main.png)
 ![Alt text](/screenshots/projects.png)
-![Alt text](/screenshots/settings.png)
 ![Alt text](/screenshots/stats.png)
 ![Alt text](/screenshots/notification.png)
 
