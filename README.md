@@ -1,8 +1,14 @@
 # Pomodoro Productivity Timer 
 This app helps to use Pomodoro technique to organize work process. The Pomodoro technique uses a timer to break down work into intervals, traditionally 25 minutes in length, separated by short breaks.
 
-Used technologies and libraries 
-=======
+![Alt text](/screenshots/main.png)
+![Alt text](/screenshots/projects.png)
+![Alt text](/screenshots/settings.png)
+![Alt text](/screenshots/stats.png)
+![Alt text](/screenshots/notification.png)
+
+##Used technologies and libraries 
+
 Architecture pattern: MVP.
 
 Used libraries:
@@ -12,8 +18,9 @@ Used libraries:
 - ButterKnife;
 - Timber.
 
-License
-=======
+
+
+##License
 
     Copyright 2016 Lisun Andrei
 
@@ -28,18 +35,5 @@ License
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
-Screenshots
-=======
-
-![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/main.png)
-
-![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/projects.png)
-
-![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/settings.png)
-
-![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/stats.png)
-
-![Alt text](https://raw.githubusercontent.com/jydimir/PomodoroProductivityTimer/screenshots/screenshots/notification.png)
 
 
